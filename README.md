@@ -1,155 +1,141 @@
-# AMDOX Authentication Frontend
+# Job Listing Portal — Current Progress
 
-A modern, dark-themed React frontend for the AMDOX Job Listing Portal authentication system.
+This repository contains a full-stack Job Listing Portal with an Express/MongoDB backend and a React/Vite/Tailwind frontend. Below is a concise summary of what’s implemented so far and how to run it locally.
 
-## 🚀 Tech Stack
+## Overview
 
-- **React 18** with Vite
-- **JavaScript** (ES6+)
-- **Tailwind CSS** for styling
-- **Framer Motion** for animations
-- **React Router v7** for navigation
+- User authentication for two roles:
+  - Job seekers (`User` model)
+  - Employers (`Employer` model)
+- JWT-based auth with protected routes and role-based authorization.
+- Basic user profile update and account deletion.
+- Admin-only endpoints to list job seekers and employers.
+- Health check endpoint for API status.
 
-## 📁 Project Structure
+## Tech Stack
+
+- Backend: Express, Mongoose (MongoDB), JSON Web Tokens, bcryptjs, express-validator, cors, dotenv
+- Frontend: React (Vite), Tailwind CSS, Framer Motion, React Router
+
+## Project Structure
 
 ```
-amdox-auth/
-├── public/
-│   └── amdox-logo.svg
-├── src/
-│   ├── components/
-│   │   ├── AnimatedContainer.jsx
-│   │   ├── AuthLayout.jsx
-│   │   ├── CaptchaMock.jsx
-│   │   ├── Checkbox.jsx
-│   │   ├── Divider.jsx
-│   │   ├── InputField.jsx
-│   │   ├── Logo.jsx
-│   │   ├── PrimaryButton.jsx
-│   │   ├── SocialButton.jsx
-│   │   ├── SuccessCheck.jsx
-│   │   └── index.js
-│   ├── pages/
-│   │   ├── EmployerRegisterPage.jsx
-│   │   ├── LoginPage.jsx
-│   │   ├── RegisterPage.jsx
-│   │   └── index.js
-│   ├── App.jsx
-│   ├── index.css
-│   └── main.jsx
-├── index.html
-├── package.json
-├── postcss.config.js
-├── tailwind.config.js
-└── vite.config.js
+backend/
+  server.js
+  config/
+    db.js
+  controllers/
+    auth.controller.js
+    user.controller.js
+  middleware/
+    auth.middleware.js
+  models/
+    User.js
+    Employer.js
+    index.js
+  routes/
+    auth.routes.js
+    user.routes.js
+  utils/
+    generateToken.js
+frontend/
+  index.html
+  src/
+    App.jsx
+    main.jsx
+    index.css
+    components/... (UI building blocks)
+    pages/... (Login, Register, Employer Register)
+    services/
+      api.js (API client and helpers)
 ```
 
-## 🛠️ Setup Instructions
+## Backend — API Routes
 
-### Prerequisites
+- Health:
+  - `GET /api/health` — API status
 
-- Node.js 18+ installed
-- npm or yarn package manager
+- Auth:
+  - `POST /api/auth/register` — Register job seeker
+  - `POST /api/auth/register-employer` — Register employer
+  - `POST /api/auth/login` — Login (job seeker or employer)
+  - `GET /api/auth/me` — Current user (protected)
+  - `POST /api/auth/logout` — Logout (protected)
 
-### Installation
+- Users:
+  - `PUT /api/users/profile` — Update profile (protected)
+  - `DELETE /api/users/profile` — Delete account (protected)
+  - `GET /api/users/jobseekers` — List job seekers (admin only)
+  - `GET /api/users/employers` — List employers (admin only)
+  - `GET /api/users/:id` — Get user by id (protected)
 
-1. **Navigate to the project directory:**
-   ```bash
-   cd amdox-auth
-   ```
+## Data Models
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+- `User` (job seeker): username, email, password, role, isActive, timestamps
+- `Employer`: firstName, lastName, companyEmail, password, phone, state, city, address, companyName?, role, isVerified, isActive, termsAccepted, timestamps
 
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
+Both models:
+- Hash passwords on save via `bcryptjs`.
+- `comparePassword()` method for login.
+- Remove password from JSON responses.
 
-4. **Open your browser:**
-   Navigate to `http://localhost:5173`
+## Environment Variables
 
-## 📄 Pages
+Create a `.env` file in `backend/` with:
 
-### Login Page (`/login`)
-- Split-screen layout with decorative left panel
-- Social login buttons (Google, Apple)
-- Email/password form
-- Smooth animations on load
+```
+MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>/<dbName>
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRE=7d
+NODE_ENV=development
+PORT=5001
+CLIENT_URL=http://localhost:5173
+```
 
-### User Registration (`/register`)
-- Job seeker registration form
-- Username, email, password, confirm password
-- Mock captcha verification
-- Form validation with error states
-- Success animation on completion
+Frontend expects an API base URL. Create `frontend/.env` (or use your shell) with:
 
-### Employer Registration (`/register-employer`)
-- Full-width two-column layout
-- Gold/olive themed design
-- Company details form
-- Terms and conditions checkbox
-- Staggered field animations
+```
+VITE_API_URL=http://localhost:5001/api
+```
 
-## ✨ Features
+Note: The frontend default in `services/api.js` is `http://localhost:5002/api`. Setting `VITE_API_URL` ensures it points to your running backend.
 
-### Components
-- **AuthLayout** - Split-screen authentication layout
-- **InputField** - Animated input with validation states
-- **PrimaryButton** - Button with ripple effect and loading state
-- **SocialButton** - OAuth login buttons
-- **AnimatedContainer** - Page-level animation wrapper
-- **CaptchaMock** - Simple captcha verification mock
-- **SuccessCheck** - Animated success modal
-- **Checkbox** - Custom styled checkbox
-- **Divider** - Text divider component
-- **Logo** - Brand logo component
+## Running Locally
 
-### Animations
-- Page fade-in transitions
-- Input field slide-up reveal
-- Button hover scale effects
-- Click ripple animations
-- Error shake animation
-- Success check animation
-- Staggered form field animations
-
-### Validation
-- Required field validation
-- Email format validation
-- Password strength check
-- Password confirmation match
-- Captcha verification
-- Phone number validation
-
-## 🎨 Design System
-
-### Colors
-- **Primary**: Purple/Violet gradient (`#8b5cf6` - `#6366f1`)
-- **Olive/Gold**: For employer theme (`#c9a227`)
-- **Dark**: Background and surface colors (`#0f172a` - `#1e293b`)
-
-### Typography
-- Font: Inter
-- Weights: 300, 400, 500, 600, 700, 800
-
-## 📝 Notes
-
-- No backend integration - all form submissions are mocked
-- Form data is logged to console on submit
-- Success states show mock redirects
-- Fully responsive for desktop and mobile
-
-## 🔧 Build for Production
+### Backend
 
 ```bash
-npm run build
+cd backend
+npm install
+npm run dev
 ```
 
-The build output will be in the `dist/` directory.
+- Starts Express on `PORT` (default `5001`).
+- Connects to MongoDB using `MONGODB_URI`.
 
-## 📜 License
+### Frontend
 
-This project is for demonstration purposes.
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+- Starts Vite dev server on `http://localhost:5173`.
+- Uses `VITE_API_URL` for API requests.
+
+## Frontend — Implemented Screens & Services
+
+- Screens: Login, Register (Job Seeker), Employer Register.
+- Components: Input, Buttons, Captcha mock, Animated containers, etc.
+- Services: `authAPI` (login/register/me/logout), `userAPI` (get/update/delete profile), and localStorage helpers.
+
+## Current Status
+
+- Authentication flows and core user management are in place.
+- Role-based protection for admin listing endpoints.
+- API client wired up on the frontend with environment-driven base URL.
+
+---
+
+If you want, I can add endpoint examples, screenshots, or expand setup notes next.
