@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Portal</title>
+    <link rel="stylesheet" href="Job_Portal.css">
+</head>
+<body>
+    <div class="nav_bar1">
+        <ul class="box">
+            <li class="company_logo">
+                <img src="assests/logo_img.svg">
+            </li>
+            <li class="company_name">AMDOX</li>
+            <ul class="general">
+                <li id="a" ><a href="#" style="color: white; text-decoration: none;">Home</a></li>
+                <li id="b"><a href="#" style="color: white; text-decoration: none;">Jobs</a></li>
+                <li id="c"><a href="#" style="color: white; text-decoration: none;">About Us</a></li>
+                <li id="d"><a href="#" style="color: white; text-decoration: none;">Contact Us</a></li>
+            </ul>
+            <li class="search_box">
+                <input type="text" class="search_box" placeholder="    Job title or Company...">
+            </li>
+            <button class="search_button">
+                <img src="assests/search.svg" alt="">
+            </button>
+            <li><img src="assests/notification_bell.svg" alt=""></li>
+            <li style="padding-left: 25px;"><img src="assests/profile_img.svg" alt=""></li>
+        </ul>
+    </div>
+
+    <div id="div2">
+        <div class="background_img">
+            <h1 class="line1">Find Your Dream Job Today!</h1>
+            <p class="line2">Connecting Talent with Opportunity: Your Gateway to Career Success</p>
+            
+            <div class="search-container">
+                <input type="text" placeholder="Job Title or Company" id="jobTitle">
+
+                <div class="divider"></div>
+
+                <select id="location">
+                <option value="">Select Location</option>
+                <option>New Delhi</option>
+                <option>Mumbai</option>
+                <option>Bengaluru</option>
+                <option>Hyderabad</option>
+                <option>Pune</option>
+                <option>Chennai</option>
+                <option>Kolkata</option>
+                <option>Lucknow</option>
+                <option>Ahmedabad</option>
+                </select>
+
+                <div class="divider"></div>
+
+                <select id="category">
+                <option value="">Select Category</option>
+                <option>Software Development</option>
+                <option>Data Science</option>
+                <option>AI / Machine Learning</option>
+                <option>Web Development</option>
+                <option>Marketing</option>
+                <option>Finance</option>
+                <option>Human Resources</option>
+                <option>Design</option>
+                </select>
+
+                <button class="search-btn" onclick="searchJob()">
+                <i class="fas fa-search"></i> Search Job
+                </button>
+            </div>
+
+            <script>
+                function searchJob() {
+                const jobTitle = document.getElementById('jobTitle').value;
+                const location = document.getElementById('location').value;
+                const category = document.getElementById('category').value;
+
+                alert(`Searching for "${jobTitle}" jobs in ${location || "any location"} under category ${category || "any category"}`);
+                }
+            </script>
+
+            <div  id="servey">
+                <img src="assests/servey.svg" alt="">
+            </div>
+            
+        </div>
+
+        <div id="div3">
+                <img id="partners" src="assests/partners.svg" alt="">
+        </div>
+    </div>
+
+    <div id="div4">
+
+                
+        <div class="navbar">
+            <!-- SORT DROPDOWN -->
+            <div class="dropdown">
+            <button class="dropdown-btn" id="sortBtn" style="color: black; border-color: black;">Sort by latest ▼</button>
+            <div class="dropdown-menu" id="sortMenu">
+                <label class="filter-item"><input type="radio" name="sort"> Recents</label>
+                <label class="filter-item"><input type="radio" name="sort"> 2 Days Old</label>
+                <label class="filter-item"><input type="radio" name="sort"> 1 Week Old</label>
+                <label class="filter-item"><input type="radio" name="sort"> 2 Week Old</label>
+                <label class="filter-item"><input type="radio" name="sort"> 1 Month Old</label>
+            </div>
+            </div>
+
+            <!-- NAV LINKS -->
+            <div class="nav-links">
+            <a href="#" class="active" style="padding-left: 86px;">Find Jobs</a>
+            <a href="#">Company Reviews</a>
+            <a href="#">Find Salaries</a>
+            <a href="#">Find Resumes</a>
+            <a href="#" style="padding-right: 86px;">Employers / Post Job</a>
+            </div>
+
+            <!-- FILTER DROPDOWN -->
+            <div class="dropdown">
+            <button class="dropdown-btn" id="filterBtn" style="color: black; border-color: black;">Job Filter ▼</button>
+            <div class="dropdown-menu" id="filterMenu">
+                <div class="filter-section">
+                <h4>Type of Employment</h4>
+                <div class="filter-item"><input type="checkbox" id="f1"><label for="f1">Full Time Jobs</label><span class="filter-count">159</span></div>
+                <div class="filter-item"><input type="checkbox" id="f2"><label for="f2">Part Time Jobs</label><span class="filter-count">38</span></div>
+                <div class="filter-item"><input type="checkbox" id="f3"><label for="f3">Remote Jobs</label><span class="filter-count">50</span></div>
+                <div class="filter-item"><input type="checkbox" id="f4"><label for="f4">Internship Jobs</label><span class="filter-count">76</span></div>
+                <div class="filter-item"><input type="checkbox" id="f5"><label for="f5">Training Jobs</label><span class="filter-count">15</span></div>
+                </div>
+
+                <div class="filter-section">
+                <h4>Seniority Level</h4>
+                <div class="filter-item"><input type="checkbox" id="s1"><label for="s1">Student Level</label><span class="filter-count">38</span></div>
+                <div class="filter-item"><input type="checkbox" id="s2"><label for="s2">Entry Level</label><span class="filter-count">50</span></div>
+                <div class="filter-item"><input type="checkbox" id="s3"><label for="s3">Mid Level</label><span class="filter-count">45</span></div>
+                <div class="filter-item"><input type="checkbox" id="s4"><label for="s4">Senior Level</label><span class="filter-count">30</span></div>
+                <div class="filter-item"><input type="checkbox" id="s5"><label for="s5">Directors</label><span class="filter-count">20</span></div>
+                <div class="filter-item"><input type="checkbox" id="s6"><label for="s6">VP or Above</label><span class="filter-count">15</span></div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <script>
+            const sortBtn = document.getElementById('sortBtn');
+            const sortMenu = document.getElementById('sortMenu');
+            const filterBtn = document.getElementById('filterBtn');
+            const filterMenu = document.getElementById('filterMenu');
+
+            sortBtn.addEventListener('click', () => {
+            sortMenu.classList.toggle('active');
+            filterMenu.classList.remove('active');
+            });
+
+            filterBtn.addEventListener('click', () => {
+            filterMenu.classList.toggle('active');
+            sortMenu.classList.remove('active');
+            });
+
+            document.addEventListener('click', (e) => {
+            if (!sortBtn.contains(e.target) && !sortMenu.contains(e.target))
+                sortMenu.classList.remove('active');
+            if (!filterBtn.contains(e.target) && !filterMenu.contains(e.target))
+                filterMenu.classList.remove('active');
+            });
+        </script>
+
+    </div>
+
+
+    <div style="padding-top: 25px; padding-bottom: 15px; padding-left: 15px; font-size: 25px; font-family: 'Nunito', sans-serif;">
+        <h3>8,132 Job Opennings...</h3>
+    </div>
+
+    <div id="div5">  
+        <div class="job-container">
+
+                <!-- Card 1 -->
+                <div class="job-card">
+                <div class="job-header">
+                    <div class="job-logo" style="background:#0078D4;">Ps</div>
+                    <i class="fas fa-ellipsis-h menu-btn"></i>
+                </div>
+                <pre class="job-title">Senior Product Designer 
+Growth</pre>
+                <p class="job-country">Afghanistan</p>
+                <div class="job-details">
+                    <span>Kabul, New</span>
+                    <span class="job-type">Full-Time</span>
+                    <span class="job-salary">$10520 PA</span>
+                </div>
+                <p class="job-desc">
+                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.
+                </p>
+                <div class="job-tags">
+                    <span class="job-tag">Design</span>
+                    <span class="job-tag">User Experience</span>
+                    <span class="job-tag">Senior</span>
+                </div>
+                <div class="job-footer">
+                    <span>28 March 2021</span>
+                    <div class="footer-icons">
+                    <i class="far fa-times-circle"></i>
+                    <i class="far fa-bookmark"></i>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="job-card">
+                <div class="job-header">
+                    <div class="job-logo" style="background:#9C27B0;">Xd</div>
+                    <i class="fas fa-ellipsis-h menu-btn"></i>
+                </div>
+                <pre class="job-title">Experienced Market 
+Research Analyst</pre>
+                <p class="job-country">Ethiopia</p>
+                <div class="job-details">
+                    <span>Addis Ababa</span>
+                    <span class="job-type">Full-Time</span>
+                    <span class="job-salary">$10000 PA</span>
+                </div>
+                <p class="job-desc">
+                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.
+                </p>
+                <div class="job-tags">
+                    <span class="job-tag">Design</span>
+                    <span class="job-tag">User Experience</span>
+                    <span class="job-tag">Senior</span>
+                </div>
+                <div class="job-footer">
+                    <span>28 March 2021</span>
+                    <div class="footer-icons">
+                    <i class="far fa-times-circle"></i>
+                    <i class="far fa-bookmark"></i>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="job-card">
+                <div class="job-header">
+                    <div class="job-logo" style="background:#E65100;">Ai</div>
+                    <i class="fas fa-ellipsis-h menu-btn"></i>
+                </div>
+                <pre class="job-title">Pega Decisioning / 
+Marketing Developer</pre>
+                <p class="job-country">Mozambique</p>
+                <div class="job-details">
+                    <span>Maputo</span>
+                    <span class="job-type">Full-Time</span>
+                    <span class="job-salary">$5200 PA</span>
+                </div>
+                <p class="job-desc">
+                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.
+                </p>
+                <div class="job-tags">
+                    <span class="job-tag">Design</span>
+                    <span class="job-tag">User Experience</span>
+                    <span class="job-tag">Senior</span>
+                </div>
+                <div class="job-footer">
+                    <span>28 March 2021</span>
+                    <div class="footer-icons">
+                    <i class="far fa-times-circle"></i>
+                    <i class="far fa-bookmark"></i>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="job-card">
+                <div class="job-header">
+                    <div class="job-logo" style="background:#9C27B0;">RM</div>
+                    <i class="fas fa-ellipsis-h menu-btn"></i>
+                </div>
+                <pre class="job-title">Relationship Manage</pre>
+                <p class="job-country">Ethiopia</p>
+                <div class="job-details">
+                    <span>Addis Ababa</span>
+                    <span class="job-type">Full-Time</span>
+                    <span class="job-salary">$10000 PA</span>
+                </div>
+                <p class="job-desc">
+                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.
+                </p>
+                <div class="job-tags">
+                    <span class="job-tag">Design</span>
+                    <span class="job-tag">User Experience</span>
+                    <span class="job-tag">Senior</span>
+                </div>
+                <div class="job-footer">
+                    <span>28 March 2021</span>
+                    <div class="footer-icons">
+                    <i class="far fa-times-circle"></i>
+                    <i class="far fa-bookmark"></i>
+                    </div>
+                </div>
+                </div>
+
+
+                
+                <!-- Card 5 -->
+                <div class="job-card">
+                <div class="job-header">
+                    <div class="job-logo" style="background:#9C27B0;">RM</div>
+                    <i class="fas fa-ellipsis-h menu-btn"></i>
+                </div>
+                <pre class="job-title">Data Scientist Role</pre>
+                <p class="job-country">India</p>
+                <div class="job-details">
+                    <span>Addis Ababa</span>
+                    <span class="job-type">Full-Time</span>
+                    <span class="job-salary">$10000 PA</span>
+                </div>
+                <p class="job-desc">
+                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.
+                </p>
+                <div class="job-tags">
+                    <span class="job-tag">Design</span>
+                    <span class="job-tag">User Experience</span>
+                    <span class="job-tag">Senior</span>
+                </div>
+                <div class="job-footer">
+                    <span>28 March 2021</span>
+                    <div class="footer-icons">
+                    <i class="far fa-times-circle"></i>
+                    <i class="far fa-bookmark"></i>
+                    </div>
+                </div>
+                </div>
+
+
+
+
+                <!-- Card 6 -->
+                <div class="job-card">
+                <div class="job-header">
+                    <div class="job-logo" style="background:#9C27B0;">RM</div>
+                    <i class="fas fa-ellipsis-h menu-btn"></i>
+                </div>
+                <pre class="job-title">Machine Learning 
+Engineer</pre>
+                <p class="job-country">India</p>
+                <div class="job-details">
+                    <span>Addis Ababa</span>
+                    <span class="job-type">Full-Time</span>
+                    <span class="job-salary">$10000 PA</span>
+                </div>
+                <p class="job-desc">
+                    It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.
+                </p>
+                <div class="job-tags">
+                    <span class="job-tag">Design</span>
+                    <span class="job-tag">User Experience</span>
+                    <span class="job-tag">Senior</span>
+                </div>
+                <div class="job-footer">
+                    <span>28 March 2021</span>
+                    <div class="footer-icons">
+                    <i class="far fa-times-circle"></i>
+                    <i class="far fa-bookmark"></i>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+
+
+
+
+
+        <div id="div6">
+            <section class="contact-container">
+                <!-- LEFT -->
+                <div class="left-section">
+                    <h1>You Will Grow, You Will Succeed. We Promise That</h1>
+                    <p>
+                        Pellentesque arcu facilisis nunc mi proin. Dignissim mattis in lectus
+                        tincidunt tincidunt ultrices. Diam convallis morbi pellentesque
+                        adipiscing
+                    </p>
+
+                    <div class="info-grid">
+                        <div class="info-box">
+                            <div class="icon"><img src="assests/phone.svg" alt=""></div>
+                            <div>
+                                <h4>Call for inquiry</h4>
+                                <span>+257 388-6895</span>
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="icon"> <img src="assests/location.svg" alt=""></div>
+                            <div>
+                                <h4>Office</h4>
+                                <span>19 North Road Piscataway, NY 08854</span>
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="icon"><img src="assests/email.svg" alt=""></div>
+                            <div>
+                                <h4>Send us email</h4>
+                                <span>kramulous@sbcglobal.net</span>
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="icon"><img src="assests/timing.svg" alt=""></div>
+                            <div>
+                                <h4>Opening hours</h4>
+                                <span>Mon - Fri: 10AM - 10PM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT -->
+                <div class="right-section">
+                    <h2>Contact Info</h2>
+                    <p>Nibh dis faucibus proin lacus tristique</p>
+
+                    <form id="contactForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" id="firstName" placeholder="Your name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" id="lastName" placeholder="Your last name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="email" placeholder="Your E-mail address" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea id="message" placeholder="Your message..." required></textarea>
+                        </div>
+
+                        <button type="submit">Send Message</button>
+                    </form>
+                </div>
+
+            </section>
+
+            <script>
+            document.getElementById("contactForm").addEventListener("submit", function(e) {
+                e.preventDefault();
+
+                const firstName = document.getElementById("firstName").value.trim();
+                const lastName = document.getElementById("lastName").value.trim();
+                const email = document.getElementById("email").value.trim();
+                const message = document.getElementById("message").value.trim();
+
+                if (!firstName || !lastName || !email || !message) {
+                    alert("Please fill all fields.");
+                    return;
+                }
+
+                alert("Message sent successfully!");
+
+                this.reset();
+            });
+            </script>
+        </div>
+
+    <div id="div7">
+        <img src="assests/footer_img.svg" style="margin-top: 10px; width: 100%;" alt="">
+    </div>
+
+
+    </div>
+</body>
+</html>
