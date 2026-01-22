@@ -1,0 +1,716 @@
+/* Employer Dashboard Distinct Styles */
+
+.page {
+    min-height: 100vh;
+    background-color: var(--color-background);
+}
+
+.dashboardLayout {
+    display: flex;
+    min-height: calc(100vh - 64px);
+}
+
+/* Sidebar - Dark theme for Admin feel */
+.sidebar {
+    width: 280px;
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: var(--border-width) solid var(--color-border);
+}
+
+.sidebarHeader {
+    padding: 24px 24px 24px 32px;
+    /* Increased left padding for alignment */
+    border-bottom: 1px solid var(--color-border);
+}
+
+.sidebarTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+    letter-spacing: -0.025em;
+}
+
+.sidebarNav {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.navItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+}
+
+.navItem:hover {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+}
+
+.navItemActive {
+    background-color: var(--primary);
+    color: var(--primary-foreground, #fff);
+}
+
+.navItemActive:hover {
+    background-color: var(--primary-dark, var(--primary));
+}
+
+/* Main Content area */
+.mainContent {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+}
+
+/* Hero Stats Section */
+.heroStats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.statCard {
+    background-color: var(--color-surface);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+}
+
+.statHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.statIcon {
+    padding: 10px;
+    border-radius: 8px;
+    background-color: var(--color-background);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.statValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+    line-height: 1;
+}
+
+.statLabel {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+/* Quick Actions */
+.quickActions {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.actionButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background-color: var(--color-accent-primary);
+    color: var(--color-surface);
+    border-radius: 8px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: var(--shadow-md);
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+}
+
+.actionButton:hover {
+    background-color: var(--color-accent-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.actionButtonSecondary {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.actionButtonSecondary:hover {
+    background-color: var(--color-background);
+    border-color: var(--color-border);
+}
+
+/* Sections & Cards */
+.sectionTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 20px;
+}
+
+.card {
+    background: var(--color-surface);
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 32px;
+}
+
+.formCard {
+    background: var(--color-surface);
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 32px;
+    padding: 32px;
+}
+
+.cardHeader {
+    padding: 24px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cardTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+/* Table / List Styles */
+.tableContainer {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table th {
+    text-align: left;
+    padding: 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+}
+
+.table td {
+    padding: 16px;
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.table tr:hover {
+    background-color: var(--color-background);
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.listItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.listItem:hover {
+    box-shadow: var(--shadow-sm);
+    border-color: var(--color-accent-primary);
+}
+
+.listItemInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.listItemTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.listItemMeta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.listItemMeta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.listItemActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+/* ... existing code ... */
+
+.formSection {
+    margin-bottom: 32px;
+}
+
+.formSectionTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0 0 24px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.formGridFull {
+    grid-column: 1 / -1;
+}
+
+.formRow {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.formActions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+}
+
+/* Skills */
+.skillsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skillTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background-color: var(--color-background);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.skillTagPrimary {
+    background-color: var(--primary-light, #e0e7ff);
+    color: var(--primary);
+}
+
+.skillLevel {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+.removeSkill {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: currentColor;
+    opacity: 0.6;
+}
+
+.removeSkill:hover {
+    opacity: 1;
+}
+
+/* Experience/Education Cards */
+.entryCard {
+    background-color: var(--color-background);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid var(--color-border);
+}
+
+.entryHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.entryTitle {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.entrySubtitle {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+.entryMeta {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+}
+
+.entryDescription {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+.entryActions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboardLayout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .sidebarNav {
+        padding: 0 16px;
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 0;
+    }
+
+    .sidebarHeader {
+        padding-left: 16px !important;
+    }
+
+    .navItem {
+        white-space: nowrap;
+    }
+
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Empty State Fixes */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center horizontally */
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+}
+
+.emptyIcon {
+    font-size: 48px;
+    width: 64px;
+    height: 64px;
+    color: var(--color-text-muted);
+    /* #cbd5e1 equivalent */
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emptyTitle {
+    margin-top: 0;
+    margin-bottom: var(--space-2);
+    color: var(--color-text-primary);
+}
+
+.emptyDescription {
+    margin-bottom: var(--space-6);
+    color: var(--color-text-secondary);
+    max-width: 400px;
+}
+
+/* Kanban Board Styles */
+.kanbanBoard {
+    display: flex;
+    gap: 16px;
+    height: calc(100vh - 250px);
+    overflow-x: auto;
+    padding-bottom: 16px;
+}
+
+.kanbanColumn {
+    flex: 1;
+    min-width: 280px;
+    background-color: var(--color-background-alt);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border);
+}
+
+.columnHeader {
+    padding: 16px;
+    border-bottom: 1px solid var(--color-border);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background-color: var(--color-surface);
+    border-radius: 12px 12px 0 0;
+}
+
+.columnCount {
+    background-color: var(--color-background);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+}
+
+.columnBody {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.candidateCard {
+    background-color: var(--color-surface);
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.candidateCard:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--color-accent-primary);
+}
+
+.candidateName {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+}
+
+.candidateRole {
+    font-size: 0.85rem;
+    color: var(--color-accent-primary);
+    margin: 0 0 8px 0;
+    font-weight: 500;
+}
+
+.candidateMeta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+}
+
+.candidateActions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border-light);
+}
+
+.emptyColumn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    text-align: center;
+    padding: 24px;
+    opacity: 0.7;
+}
+
+/* Filter Styles */
+.filterContainer {
+    margin-bottom: 24px;
+    max-width: 400px;
+}
+
+.filterLabel {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+}
+
+.filterSelect {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    cursor: pointer;
+}
+
+.filterSelect:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 2px var(--color-accent-primary-hover);
+}
+
+/* Settings Page Styles */
+.settingsCard {
+    background: var(--color-surface);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+}
+
+.settingsCardTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0 0 8px 0;
+}
+
+.settingsCardDescription {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.inputLabel {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-bottom: 6px;
+}
+
+.checkboxRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.checkboxRow:hover {
+    background-color: var(--color-background-alt, rgba(0, 0, 0, 0.02));
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: var(--color-accent-primary);
+}
+
+.checkboxLabel {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+}
+
+.checkboxDescription {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+}

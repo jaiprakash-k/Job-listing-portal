@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Connect - Job Finder Application</title>
+  <meta name="description" content="Job Finder Application" />
+  <meta name="author" content="Job Connect - Job Finder Application" />
+
+  <meta property="og:title" content="Job Connect - Job Finder Application" />
+  <meta property="og:description" content="Job Finder Application" />
+  <meta property="og:type" content="website" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+</head>
+
+<body>
+  <script>
+    window.onerror = function (message, source, lineno, colno, error) {
+      const errorDiv = document.createElement('div');
+      errorDiv.style.position = 'fixed';
+      errorDiv.style.top = '0';
+      errorDiv.style.left = '0';
+      errorDiv.style.width = '100%';
+      errorDiv.style.backgroundColor = 'red';
+      errorDiv.style.color = 'white';
+      errorDiv.style.padding = '20px';
+      errorDiv.style.zIndex = '9999';
+      errorDiv.style.fontFamily = 'monospace';
+      errorDiv.innerText = 'Global Error: ' + message + '\nSource: ' + source + ':' + lineno + ':' + colno + '\nStack: ' + (error ? error.stack : 'No stack');
+      document.body.appendChild(errorDiv);
+    };
+    window.onunhandledrejection = function (event) {
+      const errorDiv = document.createElement('div');
+      errorDiv.style.position = 'fixed';
+      errorDiv.style.top = '50%';
+      errorDiv.style.left = '0';
+      errorDiv.style.width = '100%';
+      errorDiv.style.backgroundColor = 'orange';
+      errorDiv.style.color = 'black';
+      errorDiv.style.padding = '20px';
+      errorDiv.style.zIndex = '9999';
+      errorDiv.style.fontFamily = 'monospace';
+      errorDiv.innerText = 'Unhandled Promise Rejection: ' + event.reason;
+      document.body.appendChild(errorDiv);
+    };
+  </script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>

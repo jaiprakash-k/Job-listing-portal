@@ -1,0 +1,278 @@
+/* Company Detail Page Styles */
+
+.page {
+    min-height: 100vh;
+    background-color: #f8fafc;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 24px;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.backLink:hover {
+    color: #2563eb;
+}
+
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.companyHeader {
+    display: flex;
+    align-items: start;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.companyLogo {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    background-color: #eff6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.companyInfo {
+    flex: 1;
+}
+
+.companyName {
+    margin: 0 0 8px 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.companyTagline {
+    margin: 0 0 16px 0;
+    font-size: 1.1rem;
+    color: #64748b;
+}
+
+.companyMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.socialLinks {
+    display: flex;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.socialLink {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.socialLink:hover {
+    color: #2563eb;
+}
+
+.section {
+    margin-bottom: 24px;
+}
+
+.sectionTitle {
+    margin: 0 0 16px 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.sectionContent {
+    margin: 0;
+    color: #475569;
+    line-height: 1.7;
+}
+
+.missionText {
+    font-style: italic;
+}
+
+.valuesGrid {
+    display: grid;
+    gap: 16px;
+}
+
+.valueCard {
+    padding: 16px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.valueName {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.valueDescription {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.techStackGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.techCategory {
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: #64748b;
+}
+
+.tagList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.techTag {
+    padding: 6px 12px;
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.benefitTag {
+    padding: 6px 12px;
+    background-color: #f0fdf4;
+    color: #15803d;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.jobsList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.jobCard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+}
+
+.jobCard:hover {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+}
+
+.jobInfo {
+    flex: 1;
+}
+
+.jobTitle {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.jobMeta {
+    display: flex;
+    gap: 12px;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.emptyJobs {
+    margin: 0;
+    color: #64748b;
+    text-align: center;
+    padding: 32px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 24px 16px;
+    }
+
+    .card {
+        padding: 24px;
+    }
+
+    .companyHeader {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .companyName {
+        font-size: 1.75rem;
+    }
+
+    .companyMeta {
+        justify-content: center;
+    }
+
+    .socialLinks {
+        justify-content: center;
+    }
+
+    .jobCard {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .jobMeta {
+        flex-direction: column;
+        gap: 4px;
+    }
+}
