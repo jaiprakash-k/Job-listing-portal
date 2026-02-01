@@ -1,13 +1,22 @@
 /* Employer Dashboard Distinct Styles */
 
 .page {
-    min-height: 100vh;
+    height: 100vh;
+    /* Lock page height to viewport */
+    width: 100vw;
+    overflow: hidden;
+    /* Prevent body scroll */
     background-color: var(--color-background);
 }
 
 .dashboardLayout {
     display: flex;
-    min-height: calc(100vh - 64px);
+    height: 100vh;
+    /* Full height */
+    padding-top: 85px;
+    /* Account for fixed navbar */
+    overflow: hidden;
+    /* Contain children */
 }
 
 /* Sidebar - Dark theme for Admin feel */
@@ -19,10 +28,13 @@
     display: flex;
     flex-direction: column;
     border-right: var(--border-width) solid var(--color-border);
+    /* Independent scrolling */
+    height: 100%;
+    overflow-y: auto;
 }
 
 .sidebarHeader {
-    padding: 24px 24px 24px 32px;
+    padding: 24px 24px 24px 20px;
     /* Increased left padding for alignment */
     border-bottom: 1px solid var(--color-border);
 }
@@ -77,8 +89,11 @@
 /* Main Content area */
 .mainContent {
     flex: 1;
-    padding: 32px;
+    min-width: 0;
+    /* Independent scrolling */
+    height: 100%;
     overflow-y: auto;
+    padding: 32px;
 }
 
 /* Hero Stats Section */
@@ -110,7 +125,8 @@
     padding: 10px;
     border-radius: 8px;
     background-color: var(--color-background);
-    color: var(--primary);
+    color: var(--color-accent-primary);
+    /* Fixed variable name */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -173,12 +189,30 @@
     border-color: var(--color-border);
 }
 
+/* Page Header */
+.pageHeader {
+    margin-bottom: 24px;
+}
+
+.pageTitle {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 8px 0;
+}
+
+.pageDescription {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
 /* Sections & Cards */
 .sectionTitle {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--color-text-primary);
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .card {
@@ -310,6 +344,60 @@
     flex-shrink: 0;
 }
 
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badgeActive {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+}
+
+.badgeDraft {
+    background-color: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+}
+
+.badgeClosed {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+}
+
+.badgeApplied {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+}
+
+.badgeViewed {
+    background-color: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+}
+
+.badgeShortlisted {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+}
+
+.badgeInterview {
+    background-color: rgba(236, 72, 153, 0.15);
+    color: #f472b6;
+}
+
+.badgeOffer {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+}
+
+.badgeRejected {
+    background-color: rgba(244, 63, 94, 0.15);
+    color: #fb7185;
+}
+
 /* ... existing code ... */
 
 .formSection {
@@ -387,8 +475,49 @@
     opacity: 0.6;
 }
 
+.selectInput {
+    width: 100%;
+    height: 44px;
+    /* Match CustomInput height */
+    padding: 0 var(--space-4);
+    /* Match CustomInput padding */
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    /* Match CustomInput font size */
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    /* Match CustomInput surface */
+    color: var(--color-text-primary);
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.selectInput:focus {
+    border-color: var(--color-accent-primary);
+    /* Assuming border-focus is this or similar */
+    box-shadow: 0 0 0 3px rgba(74, 107, 93, 0.1);
+    /* Match CustomInput shadow */
+}
+
 .removeSkill:hover {
     opacity: 1;
+}
+
+.tagInputContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border: 1px solid var(--color-border);
+    padding: 8px;
+    border-radius: 8px;
+    min-height: 42px;
+    background-color: var(--color-background);
+}
+
+.shortInput {
+    max-width: 150px;
 }
 
 /* Experience/Education Cards */
@@ -405,6 +534,15 @@
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 8px;
+}
+
+.sectionLabel {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+    text-transform: capitalize;
 }
 
 .entryTitle {
@@ -440,13 +578,27 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+    .page {
+        height: auto;
+        overflow: visible;
+    }
+
     .dashboardLayout {
         flex-direction: column;
+        height: auto;
+        overflow: visible;
     }
 
     .sidebar {
         width: 100%;
         height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .mainContent {
+        height: auto;
+        overflow: visible;
     }
 
     .sidebarNav {
@@ -508,7 +660,7 @@
 .kanbanBoard {
     display: flex;
     gap: 16px;
-    height: calc(100vh - 250px);
+    min-height: 500px;
     overflow-x: auto;
     padding-bottom: 16px;
 }
@@ -549,7 +701,7 @@
 
 .columnBody {
     flex: 1;
-    overflow-y: auto;
+    /* overflow-y: auto;  <-- REMOVE double scroll */
     padding: 12px;
     display: flex;
     flex-direction: column;
@@ -708,9 +860,93 @@
     margin-bottom: 2px;
 }
 
-.checkboxDescription {
-    display: block;
-    font-size: 0.8125rem;
+
+
+/* Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: var(--color-surface);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+    animation: modalSlideUp 0.3s ease-out;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.modalHeader h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.modalClose {
+    background: none;
+    border: none;
+    cursor: pointer;
     color: var(--color-text-secondary);
-    line-height: 1.4;
+    padding: 4px;
+}
+
+.modalClose:hover {
+    color: var(--color-text-primary);
+}
+
+.modalBody {
+    padding: 24px;
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tagInputContainer {
+    width: 100%;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-base);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tagInputContainer:focus-within {
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 3px rgba(74, 107, 93, 0.1);
 }

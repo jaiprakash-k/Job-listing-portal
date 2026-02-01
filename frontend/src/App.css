@@ -1,8 +1,6 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
 }
 
 .logo {
@@ -11,9 +9,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -22,6 +22,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -39,4 +40,24 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Global Variable Mappings for Non-Tailwind Usage */
+:root {
+  --color-background: hsl(var(--background));
+  --color-surface: hsl(var(--card));
+  --color-text-primary: hsl(var(--foreground));
+  --color-text-secondary: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-accent-primary: hsl(var(--primary));
+  --color-accent-primary-hover: hsl(var(--primary) / 0.9);
+  --color-text-muted: hsl(var(--muted-foreground));
+
+  /* Spacing */
+  --space-2: 0.5rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+
+  /* Border */
+  --border-width: 1px;
 }

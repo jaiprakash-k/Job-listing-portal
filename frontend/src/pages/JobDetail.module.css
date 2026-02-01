@@ -10,6 +10,7 @@
   max-width: var(--container-xl);
   margin: 0 auto;
   padding: var(--space-8) var(--space-6);
+  padding-top: 100px;
   display: grid;
   grid-template-columns: 1fr 360px;
   gap: var(--space-8);
@@ -399,7 +400,7 @@
   .jobDetailContainer {
     grid-template-columns: 1fr;
   }
-  
+
   .applyCard {
     position: static;
   }

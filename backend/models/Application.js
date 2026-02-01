@@ -13,11 +13,12 @@ const applicationSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Applied', 'Viewed', 'Shortlisted', 'Interview', 'Offer', 'Rejected'],
+        enum: ['Applied', 'Viewed', 'Reviewed', 'Shortlisted', 'Interview', 'Offer', 'Rejected'],
         default: 'Applied'
     },
     resumeUrl: String,
-    coverLetter: String, // Optional
+    coverLetter: String,
+    linkedIn: String,
     appliedAt: {
         type: Date,
         default: Date.now

@@ -1,12 +1,14 @@
 /* ============================================
    Global Styles - JobConnect
+   Dark, sophisticated design system
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 @import './variables.css';
 
 /* ===== CSS Reset ===== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -27,23 +29,63 @@ body {
   color: var(--color-text-primary);
   background-color: var(--color-background);
   min-height: 100vh;
+  position: relative;
+}
+
+/* Subtle noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.03;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
 /* ===== Typography Defaults ===== */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
-  font-weight: var(--font-semibold);
+  font-weight: var(--font-bold);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
   color: var(--color-text-primary);
 }
 
-h1 { font-size: var(--text-5xl); }
-h2 { font-size: var(--text-4xl); }
-h3 { font-size: var(--text-3xl); }
-h4 { font-size: var(--text-2xl); }
-h5 { font-size: var(--text-xl); }
-h6 { font-size: var(--text-lg); }
+h1 {
+  font-size: var(--text-6xl);
+  font-weight: var(--font-extrabold);
+  letter-spacing: var(--tracking-tighter);
+}
+
+h2 {
+  font-size: var(--text-4xl);
+  letter-spacing: var(--tracking-tight);
+}
+
+h3 {
+  font-size: var(--text-3xl);
+}
+
+h4 {
+  font-size: var(--text-2xl);
+}
+
+h5 {
+  font-size: var(--text-xl);
+}
+
+h6 {
+  font-size: var(--text-lg);
+}
 
 p {
   color: var(--color-text-secondary);
@@ -57,12 +99,12 @@ a {
 }
 
 a:hover {
-  color: var(--color-accent-primary-hover);
+  color: var(--color-accent-secondary);
 }
 
 /* ===== Focus States - Accessible ===== */
 :focus-visible {
-  outline: 2px solid var(--color-border-focus);
+  outline: 2px solid var(--color-accent-primary);
   outline-offset: 2px;
 }
 
@@ -71,7 +113,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid var(--color-border-focus);
+  outline: 2px solid var(--color-accent-primary);
   outline-offset: 2px;
 }
 
@@ -83,13 +125,25 @@ button {
   background: none;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   font-family: var(--font-body);
   font-size: var(--text-base);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-muted);
 }
 
 /* ===== Lists ===== */
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
@@ -128,27 +182,168 @@ img {
   border: 0;
 }
 
+/* ===== Glass Effect Utility ===== */
+.glass {
+  background: var(--color-surface-glass);
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
+  border: 1px solid var(--color-border);
+}
+
+.glass-strong {
+  background: var(--color-surface-glass);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
+  border: 1px solid var(--color-border-light);
+}
+
+/* ===== Glow Effects ===== */
+.glow {
+  box-shadow: var(--shadow-glow);
+}
+
+.glow-lg {
+  box-shadow: var(--shadow-glow-lg);
+}
+
+/* ===== Gradient Text ===== */
+.gradient-text {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 /* ===== Selection ===== */
 ::selection {
   background-color: var(--color-accent-primary);
   color: var(--color-text-inverse);
 }
 
-/* ===== Scrollbar (subtle) ===== */
+/* ===== Scrollbar - Sleek Dark ===== */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-background-alt);
+  background: var(--color-background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: var(--radius-sm);
+  background: var(--color-border-light);
+  border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
+}
+
+/* ===== Animation Utilities ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-slow) ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp var(--transition-slow) ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft var(--transition-slow) ease-out forwards;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Staggered animation delays */
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+/* ===== Responsive Helpers ===== */
+@media (max-width: 768px) {
+  h1 {
+    font-size: var(--text-4xl);
+  }
+
+  h2 {
+    font-size: var(--text-3xl);
+  }
+
+  h3 {
+    font-size: var(--text-2xl);
+  }
 }

@@ -1,36 +1,9 @@
-/* Company Detail Page Styles - Dark Theme */
-
-.page {
-    min-height: 100vh;
-    background-color: var(--color-background, #0a0a0b);
-}
-
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 40px 24px;
-    padding-top: 100px;
-}
-
-.backLink {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 24px;
-    color: var(--color-accent-primary, #f59e0b);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
-}
-
-.backLink:hover {
-    color: #fbbf24;
-}
+/* Company Profile View Styles - Dark Theme */
 
 .card {
     background: var(--color-surface, #18181b);
     border-radius: 16px;
-    padding: 32px;
+    padding: 24px;
     border: 1px solid var(--color-border, #27272a);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
@@ -86,6 +59,7 @@
     gap: 6px;
     font-size: 0.9rem;
     color: var(--color-text-secondary, #a1a1aa);
+    line-height: 1;
 }
 
 .socialLinks {
@@ -123,7 +97,9 @@
 .sectionContent {
     margin: 0;
     color: var(--color-text-secondary, #a1a1aa);
-    line-height: 1.7;
+    line-height: 1.8;
+    max-width: 800px;
+    font-size: 1rem;
 }
 
 .missionText {
@@ -242,13 +218,13 @@
     padding: 32px;
 }
 
+/* Edit Button in Header */
+.editButtonWrapper {
+    margin-left: auto;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
-    .container {
-        padding: 24px 16px;
-        padding-top: 100px;
-    }
-
     .card {
         padding: 24px;
     }
@@ -268,6 +244,14 @@
     }
 
     .socialLinks {
+        justify-content: center;
+    }
+
+    .editButtonWrapper {
+        margin-left: 0;
+        margin-top: 16px;
+        width: 100%;
+        display: flex;
         justify-content: center;
     }
 

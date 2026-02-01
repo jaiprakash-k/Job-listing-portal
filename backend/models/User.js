@@ -77,6 +77,10 @@ const userSchema = new mongoose.Schema({
             default: 'Public'
         }
     },
+    savedJobs: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Job'
+    }],
     createdAt: {
         type: Date,
         default: Date.now,

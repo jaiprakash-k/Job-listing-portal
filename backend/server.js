@@ -34,6 +34,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/users', require('./routes/users'));
 app.use('/api/applications', require('./routes/applications'));
+app.use('/api/upload', require('./routes/upload'));
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);

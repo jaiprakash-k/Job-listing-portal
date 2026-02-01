@@ -6,8 +6,10 @@ import Tag from '../components/ui/CustomTag';
 import { techStacks, experienceLevels, formatSalary, formatPostedDate } from '../data/mockData';
 import styles from './Jobs.module.css';
 import { api } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 
 const Jobs = () => {
+  const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -22,10 +24,31 @@ const Jobs = () => {
   const [savedJobs, setSavedJobs] = useState([]);
 
   useEffect(() => {
-    const fetchJobs = async () => {
+    const fetchData = async () => {
       try {
-        const data = await api.get('/jobs');
-        setJobs(data);
+        // Always fetch jobs
+        const jobsData = await api.get('/jobs');
+        setJobs(jobsData);
+
+        // Only fetch saved jobs if user is logged in
+        if (user) {
+          console.log('User is logged in:', user);
+          try {
+            const profileData = await api.get('/users/profile');
+            console.log('Profile data:', profileData);
+            console.log('Saved jobs from profile:', profileData?.savedJobs);
+            if (profileData?.savedJobs) {
+              // Convert ObjectIds to strings for comparison
+              const savedJobIds = profileData.savedJobs.map(id => typeof id === 'string' ? id : id.toString());
+              setSavedJobs(savedJobIds);
+              console.log('Set saved jobs to:', savedJobIds);
+            }
+          } catch (profileErr) {
+            console.error('Failed to fetch saved jobs:', profileErr);
+          }
+        } else {
+          console.log('User is not logged in');
+        }
       } catch (err) {
         console.error('Failed to fetch jobs:', err);
       } finally {
@@ -33,8 +56,8 @@ const Jobs = () => {
       }
     };
 
-    fetchJobs();
-  }, []);
+    fetchData();
+  }, [user]);
 
   const filteredJobs = useMemo(() => {
     let result = [...jobs];
@@ -44,7 +67,7 @@ const Jobs = () => {
       const query = searchQuery.toLowerCase();
       result = result.filter(job =>
         job.title.toLowerCase().includes(query) ||
-        job.company.name.toLowerCase().includes(query)
+        (job.company?.name || '').toLowerCase().includes(query)
       );
     }
 
@@ -110,7 +133,7 @@ const Jobs = () => {
     }
 
     return result;
-  }, [searchQuery, selectedWorkTypes, selectedExperience, selectedEmploymentTypes, selectedTechStack, salaryMin, salaryMax, sortBy]);
+  }, [jobs, searchQuery, selectedWorkTypes, selectedExperience, selectedEmploymentTypes, selectedTechStack, salaryMin, salaryMax, sortBy]);
 
   const toggleFilter = (value, selected, setSelected) => {
     if (selected.includes(value)) {
@@ -120,12 +143,50 @@ const Jobs = () => {
     }
   };
 
-  const toggleSaveJob = (jobId, e) => {
+  const toggleSaveJob = async (jobId, e) => {
     e.preventDefault();
-    if (savedJobs.includes(jobId)) {
-      setSavedJobs(savedJobs.filter(id => id !== jobId));
-    } else {
-      setSavedJobs([...savedJobs, jobId]);
+    console.log('Toggling save for job:', jobId);
+    console.log('Current saved jobs:', savedJobs);
+    console.log('User logged in:', !!user);
+
+    // If user is not logged in, save to localStorage and prompt to log in
+    if (!user) {
+      if (savedJobs.includes(jobId)) {
+        const newSavedJobs = savedJobs.filter(id => id !== jobId);
+        setSavedJobs(newSavedJobs);
+        localStorage.setItem('savedJobs', JSON.stringify(newSavedJobs));
+      } else {
+        const newSavedJobs = [...savedJobs, jobId];
+        setSavedJobs(newSavedJobs);
+        localStorage.setItem('savedJobs', JSON.stringify(newSavedJobs));
+        // Show a subtle notification that they should log in to persist
+        console.info('💡 Log in to save jobs permanently across devices!');
+      }
+      return;
+    }
+
+    // User is logged in, save to backend
+    try {
+      // Optimistically update UI
+      if (savedJobs.includes(jobId)) {
+        setSavedJobs(savedJobs.filter(id => id !== jobId));
+        console.log('Removing job from saved');
+      } else {
+        setSavedJobs([...savedJobs, jobId]);
+        console.log('Adding job to saved');
+      }
+
+      // Call API to toggle save status
+      const response = await api.post(`/jobs/${jobId}/save`);
+      console.log('API response:', response);
+    } catch (err) {
+      console.error('Failed to toggle save:', err);
+      // Revert optimistic update on error
+      if (savedJobs.includes(jobId)) {
+        setSavedJobs([...savedJobs, jobId]);
+      } else {
+        setSavedJobs(savedJobs.filter(id => id !== jobId));
+      }
     }
   };
 
@@ -298,22 +359,25 @@ const Jobs = () => {
                   {filteredJobs.map(job => (
                     <Link to={`/jobs/${job._id || job.id}`} key={job._id || job.id} className={styles.jobCard}>
                       <div className={styles.companyLogo}>
-                        {job.company.name.charAt(0)}
+                        {job.company?.name?.charAt(0) || '?'}
                       </div>
                       <div className={styles.jobInfo}>
                         <div className={styles.jobHeader}>
                           <h3 className={styles.jobTitle}>{job.title}</h3>
-                          <button
-                            className={`${styles.saveButton} ${savedJobs.includes(job._id || job.id) ? styles.saved : ''}`}
-                            onClick={(e) => toggleSaveJob(job._id || job.id, e)}
-                            aria-label={savedJobs.includes(job._id || job.id) ? 'Unsave job' : 'Save job'}
-                          >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill={savedJobs.includes(job._id || job.id) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-                              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                            </svg>
-                          </button>
+                          <div className={styles.jobHeaderRight}>
+                            <span className={styles.postedTime}>{formatPostedDate(job.postedAt)}</span>
+                            <button
+                              className={`${styles.saveButton} ${savedJobs.includes(job._id || job.id) ? styles.saved : ''}`}
+                              onClick={(e) => toggleSaveJob(job._id || job.id, e)}
+                              aria-label={savedJobs.includes(job._id || job.id) ? 'Unsave job' : 'Save job'}
+                            >
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill={savedJobs.includes(job._id || job.id) ? '#ef4444' : 'none'} stroke={savedJobs.includes(job._id || job.id) ? '#ef4444' : 'currentColor'} strokeWidth="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                              </svg>
+                            </button>
+                          </div>
                         </div>
-                        <p className={styles.companyName}>{job.company.name}</p>
+                        <p className={styles.companyName}>{job.company?.name || 'Unknown Company'}</p>
                         <div className={styles.jobMeta}>
                           <span className={styles.metaItem}>
                             <svg className={styles.metaIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -345,7 +409,6 @@ const Jobs = () => {
                           ))}
                         </div>
                       </div>
-                      <span className={styles.postedTime}>{formatPostedDate(job.postedAt)}</span>
                     </Link>
                   ))}
                 </div>

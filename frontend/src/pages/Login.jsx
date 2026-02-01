@@ -26,7 +26,18 @@ const Login = () => {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError('Invalid email or password');
+      let message = 'Invalid email or password';
+      try {
+        // api.js throws Error with JSON string
+        const parsed = JSON.parse(err.message);
+        if (parsed.message) message = parsed.message;
+      } catch (e) {
+        // If not JSON, use the raw message if available or fallback
+        if (err.message && !err.message.startsWith('{')) {
+          message = err.message;
+        }
+      }
+      setError(message);
     }
   };
 

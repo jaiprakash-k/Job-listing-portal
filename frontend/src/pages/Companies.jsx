@@ -78,11 +78,11 @@ const Companies = () => {
                             </div>
 
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
-                                {company.industry && (
-                                    <span className={styles.badge}>
-                                        {company.industry}
+                                {company.industry && company.industry.split(',').map((tag, index) => (
+                                    <span key={index} className={styles.badge}>
+                                        {tag.trim()}
                                     </span>
-                                )}
+                                ))}
                                 {company.location && (
                                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.875rem' }} className={styles.textMuted}>
                                         <MapPin size={14} />
@@ -99,7 +99,6 @@ const Companies = () => {
 
                             {company.description && (
                                 <p style={{
-                                    margin: '12px 0 0 0',
                                     margin: '12px 0 0 0',
                                     fontSize: '0.875rem',
                                     display: '-webkit-box',

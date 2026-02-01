@@ -1,9 +1,15 @@
+.pageWrapper {
+    min-height: 100vh;
+    width: 100%;
+    background-color: var(--color-background);
+    padding-top: 85px;
+    /* Account for 72px Navbar + spacing */
+}
+
 .container {
     max-width: var(--container-md);
     margin: 0 auto;
     padding: var(--space-8) var(--space-6);
-    min-height: calc(100vh - 64px);
-    background-color: var(--color-background);
 }
 
 .header {
@@ -109,5 +115,10 @@
 
     .formCard {
         padding: var(--space-4);
+    }
+
+    .pageWrapper {
+        padding-top: 65px;
+        /* Navbar is 64px on mobile */
     }
 }

@@ -22,6 +22,13 @@ const companySchema = new mongoose.Schema({
         enum: ['Remote-first', 'Hybrid', 'Onsite', 'Flexible'],
         default: 'Flexible'
     },
+    mission: String,
+    engineeringSize: String,
+    productSize: String,
+    remotePercentage: Number,
+    linkedIn: String,
+    github: String,
+    twitter: String,
     techStack: {
         type: Map,
         of: [String], // e.g. "frontend": ["React", "Vue"]

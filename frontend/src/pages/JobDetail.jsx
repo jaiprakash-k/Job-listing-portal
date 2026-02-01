@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -17,7 +17,15 @@ const JobDetail = () => {
 
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [applicationError, setApplicationError] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
+
+  // Application form state
+  const [coverLetter, setCoverLetter] = useState('');
+  const [linkedIn, setLinkedIn] = useState('');
+  const [resumeFile, setResumeFile] = useState(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -36,6 +44,32 @@ const JobDetail = () => {
       fetchJob();
     }
   }, [id]);
+
+  useEffect(() => {
+    const checkSavedStatus = async () => {
+      try {
+        const savedJobs = await api.get('/jobs/saved');
+        const isJobSaved = savedJobs.some(job => job._id === id || job.id === id);
+        setIsSaved(isJobSaved);
+      } catch (err) {
+        console.error('Failed to check saved status:', err);
+      }
+    };
+
+    if (id) {
+      checkSavedStatus();
+    }
+  }, [id]);
+
+  const handleSave = async () => {
+    try {
+      const response = await api.post(`/jobs/${id}/save`);
+      setIsSaved(response.isSaved);
+    } catch (err) {
+      console.error('Failed to toggle save:', err);
+      alert('Failed to save job. Please try again.');
+    }
+  };
 
   // Increment view count when job is viewed
   useEffect(() => {
@@ -74,12 +108,45 @@ const JobDetail = () => {
     );
   }
 
-  const handleApply = (e) => {
+  const handleApply = async (e) => {
     e.preventDefault();
-    // Simulate submission
-    setTimeout(() => {
+    setSubmitting(true);
+    setApplicationError(null);
+
+    try {
+      let uploadedResumeUrl = null;
+
+      // Upload resume file if selected
+      if (resumeFile) {
+        const formData = new FormData();
+        formData.append('resume', resumeFile);
+
+        try {
+          const uploadResult = await api.post('/upload/resume', formData);
+          uploadedResumeUrl = uploadResult.resumeUrl;
+          console.log('Resume uploaded:', uploadedResumeUrl);
+        } catch (uploadErr) {
+          console.error('Resume upload failed:', uploadErr);
+          setApplicationError('Failed to upload resume. Please try again.');
+          setSubmitting(false);
+          return;
+        }
+      }
+
+      // Submit application with resume URL
+      await api.post('/applications', {
+        jobId: id,
+        coverLetter: coverLetter.trim() || undefined,
+        linkedIn: linkedIn.trim() || undefined,
+        resumeUrl: uploadedResumeUrl
+      });
       setApplicationSubmitted(true);
-    }, 1000);
+    } catch (err) {
+      console.error('Application failed:', err);
+      setApplicationError(err.message || 'Failed to submit application. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -99,13 +166,17 @@ const JobDetail = () => {
           <div className={styles.jobHeader}>
             <div className={styles.jobHeaderTop}>
               <div className={styles.companyLogo}>
-                {job.company.name.charAt(0)}
+                {job.company?.name?.charAt(0) || '?'}
               </div>
               <div className={styles.jobHeaderInfo}>
                 <h1>{job.title}</h1>
-                <Link to={`/companies/${job.company.id}`} className={styles.companyLink}>
-                  {job.company.name}
-                </Link>
+                {job.company ? (
+                  <Link to={`/companies/${job.company._id}`} className={styles.companyLink}>
+                    {job.company.name}
+                  </Link>
+                ) : (
+                  <span className={styles.companyLink}>Unknown Company</span>
+                )}
               </div>
             </div>
 
@@ -176,6 +247,18 @@ const JobDetail = () => {
               ))}
             </div>
           </section>
+
+          {/* Benefits */}
+          {job.niceToHave && job.niceToHave.length > 0 && (
+            <section className={styles.contentSection}>
+              <h2>Benefits & Perks</h2>
+              <ul className={styles.list}>
+                {job.niceToHave.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </section>
+          )}
         </main>
 
         {/* Sidebar */}
@@ -187,9 +270,9 @@ const JobDetail = () => {
                 Apply Now
               </Button>
               <Button
-                variant="secondary"
+                variant={isSaved ? 'primary' : 'secondary'}
                 fullWidth
-                onClick={() => setIsSaved(!isSaved)}
+                onClick={handleSave}
               >
                 {isSaved ? '✓ Saved' : 'Save for Later'}
               </Button>
@@ -199,40 +282,42 @@ const JobDetail = () => {
             </p>
           </div>
 
-          <div className={styles.companyCard}>
-            <div className={styles.companyCardHeader}>
-              <div className={styles.companyCardLogo}>
-                {job.company.name.charAt(0)}
+          {job.company && (
+            <div className={styles.companyCard}>
+              <div className={styles.companyCardHeader}>
+                <div className={styles.companyCardLogo}>
+                  {job.company.name.charAt(0)}
+                </div>
+                <div className={styles.companyCardInfo}>
+                  <h4>{job.company.name}</h4>
+                  <p>{job.company.industry}</p>
+                </div>
               </div>
-              <div className={styles.companyCardInfo}>
-                <h4>{job.company.name}</h4>
-                <p>{job.company.industry}</p>
+              <div className={styles.companyStats}>
+                <div className={styles.companyStat}>
+                  <span>Team Size</span>
+                  <span>{job.company.teamSize}</span>
+                </div>
+                <div className={styles.companyStat}>
+                  <span>Founded</span>
+                  <span>{job.company.founded}</span>
+                </div>
+                <div className={styles.companyStat}>
+                  <span>Stage</span>
+                  <span>{job.company.stage}</span>
+                </div>
+                <div className={styles.companyStat}>
+                  <span>Location</span>
+                  <span>{job.company.location}</span>
+                </div>
               </div>
+              <Link to={`/companies/${job.company._id}`}>
+                <Button variant="outline" fullWidth size="small">
+                  View Company Profile
+                </Button>
+              </Link>
             </div>
-            <div className={styles.companyStats}>
-              <div className={styles.companyStat}>
-                <span>Team Size</span>
-                <span>{job.company.teamSize}</span>
-              </div>
-              <div className={styles.companyStat}>
-                <span>Founded</span>
-                <span>{job.company.founded}</span>
-              </div>
-              <div className={styles.companyStat}>
-                <span>Stage</span>
-                <span>{job.company.stage}</span>
-              </div>
-              <div className={styles.companyStat}>
-                <span>Location</span>
-                <span>{job.company.location}</span>
-              </div>
-            </div>
-            <Link to={`/companies/${job.company.id}`}>
-              <Button variant="outline" fullWidth size="small">
-                View Company Profile
-              </Button>
-            </Link>
-          </div>
+          )}
         </aside>
       </div>
 
@@ -255,7 +340,7 @@ const JobDetail = () => {
                 <div className={styles.successState}>
                   <span className={styles.successIcon}>✓</span>
                   <h3>Application Submitted!</h3>
-                  <p>We'll notify you when {job.company.name} reviews your application.</p>
+                  <p>We'll notify you when {job.company?.name || 'the company'} reviews your application.</p>
                   <Button onClick={() => setShowApplyModal(false)} style={{ marginTop: '16px' }}>
                     Close
                   </Button>
@@ -263,27 +348,71 @@ const JobDetail = () => {
               ) : (
                 <form className={styles.applyForm} onSubmit={handleApply}>
                   <div className={styles.fileUpload}>
-                    <label>Resume *</label>
-                    <div className={styles.fileDropzone}>
-                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-                      </svg>
-                      <p>Drop your resume here or click to upload</p>
-                      <span>PDF, DOC up to 5MB</span>
+                    <label>Resume (optional)</label>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept=".pdf,.doc,.docx"
+                      style={{ display: 'none' }}
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setResumeFile(e.target.files[0]);
+                        }
+                      }}
+                    />
+                    <div
+                      className={styles.fileDropzone}
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{ cursor: 'pointer' }}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                          setResumeFile(e.dataTransfer.files[0]);
+                        }
+                      }}
+                    >
+                      {resumeFile ? (
+                        <>
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="1.5">
+                            <path d="M9 12l2 2 4-4" />
+                            <circle cx="12" cy="12" r="10" />
+                          </svg>
+                          <p style={{ fontWeight: 500, color: '#22c55e' }}>{resumeFile.name}</p>
+                          <span style={{ cursor: 'pointer', color: '#64748b' }} onClick={(e) => { e.stopPropagation(); setResumeFile(null); }}>Click to remove</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                          </svg>
+                          <p>Drop your resume here or click to upload</p>
+                          <span>PDF, DOC up to 5MB</span>
+                        </>
+                      )}
                     </div>
                   </div>
                   <Textarea
                     label="Cover Letter (optional)"
                     placeholder="Tell us why you're interested in this role..."
                     rows={4}
+                    value={coverLetter}
+                    onChange={(e) => setCoverLetter(e.target.value)}
                   />
                   <Input
                     type="text"
                     label="LinkedIn Profile (optional)"
                     placeholder="https://linkedin.com/in/yourprofile"
+                    value={linkedIn}
+                    onChange={(e) => setLinkedIn(e.target.value)}
                   />
-                  <Button type="submit" fullWidth>
-                    Submit Application
+                  {applicationError && (
+                    <div style={{ color: 'var(--color-error, #dc2626)', padding: '12px', backgroundColor: '#fef2f2', borderRadius: '8px', marginBottom: '12px' }}>
+                      {applicationError}
+                    </div>
+                  )}
+                  <Button type="submit" fullWidth disabled={submitting}>
+                    {submitting ? 'Submitting...' : 'Submit Application'}
                   </Button>
                 </form>
               )}

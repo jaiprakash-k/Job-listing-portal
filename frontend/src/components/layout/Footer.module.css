@@ -1,7 +1,23 @@
+/* ============================================
+   Footer - Dark Sophisticated Theme
+   ============================================ */
+
 .footer {
-  background-color: var(--color-background-alt);
-  border-top: var(--border-width) solid var(--color-border);
+  background: var(--color-background-alt);
+  border-top: 1px solid var(--color-border);
   padding: var(--space-16) 0 var(--space-8);
+  position: relative;
+}
+
+/* Gradient accent line at top */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent-primary), transparent);
 }
 
 .footerInner {
@@ -24,7 +40,7 @@
 .footerLogo {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: var(--font-bold);
@@ -33,16 +49,17 @@
 }
 
 .footerLogoMark {
-  width: 28px;
-  height: 28px;
-  background-color: var(--color-accent-primary);
-  border-radius: var(--radius-sm);
+  width: 32px;
+  height: 32px;
+  background: var(--gradient-accent);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-text-inverse);
   font-size: var(--text-sm);
   font-weight: var(--font-bold);
+  box-shadow: var(--shadow-glow);
 }
 
 .footerTagline {
@@ -56,7 +73,7 @@
   font-size: var(--text-xs);
   font-weight: var(--font-semibold);
   text-transform: uppercase;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: var(--tracking-wider);
   color: var(--color-text-muted);
   margin-bottom: var(--space-4);
 }
@@ -71,11 +88,13 @@
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: all var(--transition-fast);
+  padding: var(--space-1) 0;
 }
 
 .footerLink:hover {
-  color: var(--color-text-primary);
+  color: var(--color-accent-primary);
+  transform: translateX(4px);
 }
 
 .footerBottom {
@@ -83,7 +102,7 @@
   justify-content: space-between;
   align-items: center;
   padding-top: var(--space-8);
-  border-top: var(--border-width) solid var(--color-border);
+  border-top: 1px solid var(--color-border);
 }
 
 .copyright {
@@ -93,21 +112,27 @@
 
 .footerSocial {
   display: flex;
-  gap: var(--space-4);
+  gap: var(--space-2);
 }
 
 .socialLink {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  color: var(--color-text-secondary);
-  transition: color var(--transition-fast);
+  width: 40px;
+  height: 40px;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
 }
 
 .socialLink:hover {
-  color: var(--color-text-primary);
+  color: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
 }
 
 @media (max-width: 768px) {
@@ -115,11 +140,11 @@
     grid-template-columns: 1fr 1fr;
     gap: var(--space-8);
   }
-  
+
   .footerBrand {
     grid-column: 1 / -1;
   }
-  
+
   .footerBottom {
     flex-direction: column;
     gap: var(--space-4);

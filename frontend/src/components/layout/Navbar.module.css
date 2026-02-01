@@ -1,16 +1,25 @@
+/* ============================================
+   Navbar - Glass Effect Dark Theme
+   ============================================ */
+
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: var(--z-sticky);
-  background-color: var(--color-surface);
-  border-bottom: var(--border-width) solid var(--color-border);
+  background: var(--color-surface-glass);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
+  border-bottom: 1px solid var(--color-border);
+  transition: all var(--transition-base);
 }
 
 .navbarInner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
+  height: 72px;
   max-width: var(--container-xl);
   margin: 0 auto;
   padding: 0 var(--space-6);
@@ -19,32 +28,38 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: var(--font-bold);
   color: var(--color-text-primary);
   text-decoration: none;
   letter-spacing: var(--tracking-tight);
+  transition: opacity var(--transition-fast);
+}
+
+.logo:hover {
+  opacity: 0.8;
 }
 
 .logoMark {
-  width: 28px;
-  height: 28px;
-  background-color: var(--color-accent-primary);
-  border-radius: var(--radius-sm);
+  width: 32px;
+  height: 32px;
+  background: var(--gradient-accent);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-text-inverse);
   font-size: var(--text-sm);
   font-weight: var(--font-bold);
+  box-shadow: var(--shadow-glow);
 }
 
 .navLinks {
   display: flex;
   align-items: center;
-  gap: var(--space-8);
+  gap: var(--space-1);
 }
 
 .navLink {
@@ -52,33 +67,26 @@
   font-weight: var(--font-medium);
   color: var(--color-text-secondary);
   text-decoration: none;
-  transition: color var(--transition-fast);
-  padding: var(--space-2) 0;
+  transition: all var(--transition-fast);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
   position: relative;
 }
 
 .navLink:hover {
   color: var(--color-text-primary);
+  background: var(--color-surface);
 }
 
 .navLink.active {
-  color: var(--color-text-primary);
-}
-
-.navLink.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: var(--color-accent-primary);
+  color: var(--color-accent-primary);
+  background: var(--color-accent-primary-light);
 }
 
 .navActions {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .userMenu {
@@ -86,25 +94,27 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: background-color var(--transition-fast);
+  border: 1px solid transparent;
 }
 
 .userMenu:hover {
-  background-color: var(--color-background-alt);
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
 }
 
 .userAvatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: var(--color-accent-muted);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-accent);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: var(--text-sm);
-  font-weight: var(--font-medium);
+  font-weight: var(--font-semibold);
   color: var(--color-text-inverse);
 }
 
@@ -114,6 +124,16 @@
   color: var(--color-text-primary);
 }
 
+/* Auth buttons styling */
+.navActions a button,
+.navActions button {
+  padding: var(--space-2) var(--space-4) !important;
+  border-radius: var(--radius-md) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: var(--font-medium) !important;
+  transition: all var(--transition-fast) !important;
+}
+
 .mobileMenuButton {
   display: none;
   padding: var(--space-2);
@@ -121,17 +141,38 @@
   border: none;
   cursor: pointer;
   color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.mobileMenuButton:hover {
+  background-color: var(--color-surface);
 }
 
 .mobileMenu {
   display: none;
-  position: absolute;
-  top: 64px;
+  position: fixed;
+  top: 72px;
   left: 0;
   right: 0;
-  background-color: var(--color-surface);
-  border-bottom: var(--border-width) solid var(--color-border);
-  padding: var(--space-4) var(--space-6);
+  background: var(--color-surface-glass);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-6);
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .mobileMenu.open {
@@ -141,8 +182,13 @@
 .mobileNavLinks {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-2);
   margin-bottom: var(--space-4);
+}
+
+.mobileNavLinks .navLink {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
 }
 
 .mobileNavActions {
@@ -150,10 +196,19 @@
   flex-direction: column;
   gap: var(--space-3);
   padding-top: var(--space-4);
-  border-top: var(--border-width) solid var(--color-border);
+  border-top: 1px solid var(--color-border);
+}
+
+.mobileNavActions button {
+  width: 100%;
+  justify-content: center;
 }
 
 @media (max-width: 768px) {
+  .navbarInner {
+    height: 64px;
+  }
+
   .navLinks {
     display: none;
   }
@@ -164,5 +219,9 @@
 
   .mobileMenuButton {
     display: flex;
+  }
+
+  .mobileMenu {
+    top: 64px;
   }
 }

@@ -1,6 +1,8 @@
 const express = require('express');
 const Job = require('../models/Job');
 const Company = require('../models/Company');
+const User = require('../models/User');
+const auth = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -24,6 +26,59 @@ router.get('/', async (req, res) => {
 
         res.json(formattedJobs);
     } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Get saved jobs
+router.get('/saved', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId).populate({
+            path: 'savedJobs',
+            populate: { path: 'companyId' }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const formattedJobs = user.savedJobs.map(job => ({
+            ...job.toObject(),
+            company: job.companyId,
+            companyId: undefined
+        }));
+
+        res.json(formattedJobs);
+    } catch (err) {
+        console.error('Error fetching saved jobs:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Toggle save job
+router.post('/:id/save', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const jobId = req.params.id;
+        const index = user.savedJobs.indexOf(jobId);
+
+        if (index === -1) {
+            // Not saved, so save it
+            user.savedJobs.push(jobId);
+            await user.save();
+            res.json({ message: 'Job saved', isSaved: true });
+        } else {
+            // Already saved, so unsave it
+            user.savedJobs.splice(index, 1);
+            await user.save();
+            res.json({ message: 'Job removed from saved', isSaved: false });
+        }
+    } catch (err) {
+        console.error('Error toggling saved job:', err);
         res.status(500).json({ message: err.message });
     }
 });
@@ -63,6 +118,34 @@ router.post('/', async (req, res) => {
     }
 });
 
+// PUT update a job by ID
+router.put('/:id', async (req, res) => {
+    try {
+        const job = await Job.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        if (!job) return res.status(404).json({ message: 'Job not found' });
+        res.json(job);
+    } catch (err) {
+        console.error('Job Update Error:', err);
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// DELETE a job by ID
+router.delete('/:id', async (req, res) => {
+    try {
+        const job = await Job.findByIdAndDelete(req.params.id);
+        if (!job) return res.status(404).json({ message: 'Job not found' });
+        res.json({ message: 'Job deleted successfully' });
+    } catch (err) {
+        console.error('Job Delete Error:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // POST increment job views
 router.post('/:id/view', async (req, res) => {
     try {
@@ -78,14 +161,6 @@ router.post('/:id/view', async (req, res) => {
     }
 });
 
-// Get saved jobs (Mock implementation for now or need a SavedJobs model)
-// For now, let's just assume we store saved job IDs in the User model or separate collection.
-// Let's implement a simple version that returns empty or random for now, or use User.savedJobs if we added it.
-// We'll update User model to have savedJobs.
 
-router.get('/saved', async (req, res) => {
-    // Requires auth
-    res.json([]);
-});
 
 module.exports = router;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   User, Briefcase, Heart, FileText, Settings, Bell, Shield,
   MapPin, Calendar, ExternalLink, X, Plus, Edit2, Trash2,
@@ -8,8 +9,9 @@ import {
 import Navbar from '../components/layout/Navbar';
 import Button from '../components/ui/CustomButton';
 import Input, { Textarea } from '../components/ui/CustomInput';
-import { useAuth } from '../context/AuthContext';
+
 import { api } from '../lib/api';
+
 import {
   formatSalary,
   formatPostedDate,
@@ -24,7 +26,8 @@ const formatUrl = (url) => {
 
 
 const JobSeekerDashboard = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('overview');
   const [profile, setProfile] = useState(null);
   const [originalProfile, setOriginalProfile] = useState(null);
@@ -32,6 +35,12 @@ const JobSeekerDashboard = () => {
   const [applications, setApplications] = useState([]);
   const [savedJobs, setSavedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Password Change State
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [passwordStatus, setPasswordStatus] = useState({ error: null, success: null });
+
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -107,6 +116,21 @@ const JobSeekerDashboard = () => {
     }
   }, [user]);
 
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchApplications = async () => {
+    try {
+      setIsRefreshing(true);
+      const applicationsData = await api.get('/applications/my-applications');
+      setApplications(applicationsData || []);
+    } catch (err) {
+      console.error('Failed to refresh applications:', err);
+      // alert('Failed to refresh status');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   if (loading) {
     return <div style={{ padding: '50px', textAlign: 'center' }}>Loading dashboard...</div>;
   }
@@ -136,7 +160,7 @@ const JobSeekerDashboard = () => {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: <Briefcase size={18} /> },
     { id: 'profile', label: 'My Profile', icon: <User size={18} /> },
-    { id: 'applications', label: 'Applications', icon: <FileText size={18} /> },
+    { id: 'applications', label: 'Applied Jobs', icon: <FileText size={18} /> },
     { id: 'saved', label: 'Saved Jobs', icon: <Heart size={18} /> },
     { id: 'settings', label: 'Settings', icon: <Settings size={18} /> },
   ];
@@ -215,15 +239,15 @@ const JobSeekerDashboard = () => {
         </div>
         <div className={styles.list}>
           {savedJobs.slice(0, 3).map(saved => (
-            <Link key={saved.id} to={`/jobs/${saved.jobId}`} className={styles.listItem}>
+            <Link key={saved._id || saved.id} to={`/jobs/${saved._id || saved.id}`} className={styles.listItem}>
               <div className={styles.listItemInfo}>
-                <h4 className={styles.listItemTitle}>{saved.job.title}</h4>
+                <h4 className={styles.listItemTitle}>{saved.title}</h4>
                 <div className={styles.listItemMeta}>
-                  <span>{saved.job.company.name}</span>
-                  <span>{formatSalary(saved.job.salaryMin)} - {formatSalary(saved.job.salaryMax)}</span>
+                  <span>{saved.company?.name || 'Unknown Company'}</span>
+                  <span>{formatSalary(saved.salaryMin)} - {formatSalary(saved.salaryMax)}</span>
                 </div>
               </div>
-              <Button variant="primary" size="small">Apply</Button>
+              <Button variant="primary" size="small">View Job</Button>
             </Link>
           ))}
         </div>
@@ -259,8 +283,55 @@ const JobSeekerDashboard = () => {
   };
 
   const handleRemoveDesiredRole = (index) => {
-    const newRoles = profile.preferences.desiredRoles.filter((_, i) => i !== index);
+    const newRoles = [...profile.preferences.desiredRoles];
+    newRoles.splice(index, 1);
     setProfile({ ...profile, preferences: { ...profile.preferences, desiredRoles: newRoles } });
+  };
+
+  const handleSubmitPasswordChange = async (e) => {
+    e.preventDefault();
+    setPasswordStatus({ error: null, success: null });
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordStatus({ error: 'New passwords do not match', success: null });
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      setPasswordStatus({ error: 'Password must be at least 6 characters', success: null });
+      return;
+    }
+
+    try {
+      await api.post('/auth/change-password', {
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword
+      });
+      setPasswordStatus({ error: null, success: 'Password changed successfully' });
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      setTimeout(() => setShowPasswordModal(false), 2000);
+    } catch (err) {
+      setPasswordStatus({ error: err.response?.data?.message || err.message || 'Failed to change password', success: null });
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      return;
+    }
+
+    const confirmText = prompt('Type "DELETE" to confirm account deletion:');
+    if (confirmText !== 'DELETE') return;
+
+    try {
+      await api.delete('/auth/delete-account');
+      alert('Account deleted successfully');
+      logout(); // Logout from context
+      navigate('/'); // Redirect to home
+    } catch (err) {
+      console.error('Delete account error:', err);
+      alert('Failed to delete account: ' + (err.response?.data?.message || err.message || 'Unknown error'));
+    }
   };
 
   const handleAddWorkType = () => {
@@ -415,7 +486,7 @@ const JobSeekerDashboard = () => {
 
   const renderProfile = () => (
     <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+      <div className={styles.profileHeader}>
         {!isEditing && (
           <Button variant="secondary" onClick={() => {
             setOriginalProfile(profile);
@@ -466,19 +537,37 @@ const JobSeekerDashboard = () => {
             </>
           ) : (
             <>
-              <div><label className={styles.detailLabel}>Full Name</label><p className={styles.detailValue}>{profile.fullName}</p></div>
-              <div><label className={styles.detailLabel}>Email</label><p className={styles.detailValue}>{profile.email}</p></div>
-              <div><label className={styles.detailLabel}>Phone</label><p className={styles.detailValue}>{profile.phone || 'Not specified'}</p></div>
-              <div><label className={styles.detailLabel}>Location</label><p className={styles.detailValue}>{profile.location || 'Not specified'}</p></div>
-              <div><label className={styles.detailLabel}>Current Title</label><p className={styles.detailValue}>{profile.currentTitle || 'Not specified'}</p></div>
-              <div><label className={styles.detailLabel}>Notice Period</label><p className={styles.detailValue}>{profile.noticePeriod || 'Not specified'}</p></div>
+              <div className={styles.detailField}>
+                <label className={styles.detailLabel}>Full Name</label>
+                <p className={styles.detailValue}>{profile.fullName}</p>
+              </div>
+              <div className={styles.detailField}>
+                <label className={styles.detailLabel}>Email</label>
+                <p className={styles.detailValue}>{profile.email}</p>
+              </div>
+              <div className={styles.detailField}>
+                <label className={styles.detailLabel}>Phone</label>
+                <p className={styles.detailValue}>{profile.phone || 'Not specified'}</p>
+              </div>
+              <div className={styles.detailField}>
+                <label className={styles.detailLabel}>Location</label>
+                <p className={styles.detailValue}>{profile.location || 'Not specified'}</p>
+              </div>
+              <div className={styles.detailField}>
+                <label className={styles.detailLabel}>Current Title</label>
+                <p className={styles.detailValue}>{profile.currentTitle || 'Not specified'}</p>
+              </div>
+              <div className={styles.detailField}>
+                <label className={styles.detailLabel}>Notice Period</label>
+                <p className={styles.detailValue}>{profile.noticePeriod || 'Not specified'}</p>
+              </div>
             </>
           )}
         </div>
-        <div className={styles.formGrid} style={{ marginTop: 'var(--space-4)' }}>
+        <div className={isEditing ? `${styles.checkboxContainer} ${styles.grid}` : styles.checkboxContainer}>
           {isEditing ? (
             <>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', fontSize: 'var(--text-sm)' }}>
+              <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
                   checked={profile.openToRemote}
@@ -486,7 +575,7 @@ const JobSeekerDashboard = () => {
                 />
                 Open to Remote
               </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', fontSize: 'var(--text-sm)' }}>
+              <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
                   checked={profile.openToRelocation}
@@ -794,18 +883,14 @@ const JobSeekerDashboard = () => {
               )}
             </>
           ) : (
-            /* View Mode: Show only View button or "Not specified" */
+            /* View Mode: Show Resume card or "Not specified" */
             <>
               {profile.resumeUrl ? (
-                <a href={profile.resumeUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', border: '1px solid var(--color-border)', borderRadius: '8px' }}>
-                    <div style={{ padding: '8px', background: '#ffebee', borderRadius: '4px', color: '#d32f2f' }}>
-                      <file-icon>PDF</file-icon> {/* Placeholder for PDF icon representation */}
-                    </div>
-                    <div>
-                      <p style={{ margin: 0, fontWeight: 500, fontSize: '14px' }}>My Resume.pdf</p>
-                      <p style={{ margin: 0, fontSize: '12px', color: 'var(--color-text-secondary)' }}>Click to view</p>
-                    </div>
+                <a href={profile.resumeUrl} target="_blank" rel="noopener noreferrer" className={styles.resumeCard}>
+                  <div className={styles.resumeIcon}>PDF</div>
+                  <div className={styles.resumeInfo}>
+                    <p className={styles.resumeTitle}>My Resume.pdf</p>
+                    <p className={styles.resumeHint}>Click to view</p>
                   </div>
                 </a>
               ) : (
@@ -819,7 +904,7 @@ const JobSeekerDashboard = () => {
       {/* Links */}
       <div className={styles.card}>
         <h3 className={styles.formSectionTitle}>Portfolio & Links</h3>
-        <div className={styles.formGrid}>
+        <div className={styles.linksGrid}>
           {isEditing ? (
             <>
               <Input
@@ -840,14 +925,35 @@ const JobSeekerDashboard = () => {
             </>
           ) : (
             <>
-              <div><label className={styles.detailLabel}>Portfolio Website</label>
-                {profile.portfolioUrl ? <a href={profile.portfolioUrl} target="_blank" rel="noopener noreferrer" className={styles.detailLink}>: {formatUrl(profile.portfolioUrl)}</a> : <p className={styles.detailValue}>: Not specified</p>}
+              <div className={styles.detailField}>
+                <label className={styles.detailLabel}>Portfolio Website</label>
+                {profile.portfolioUrl ? (
+                  <a href={profile.portfolioUrl} target="_blank" rel="noopener noreferrer" className={styles.detailLink}>
+                    {formatUrl(profile.portfolioUrl)}
+                  </a>
+                ) : (
+                  <p className={styles.detailValue}>Not specified</p>
+                )}
               </div>
-              <div><label className={styles.detailLabel}>LinkedIn</label>
-                {profile.linkedInUrl ? <a href={profile.linkedInUrl} target="_blank" rel="noopener noreferrer" className={styles.detailLink}>: {formatUrl(profile.linkedInUrl)}</a> : <p className={styles.detailValue}>: Not specified</p>}
+              <div className={styles.detailField}>
+                <label className={styles.detailLabel}>LinkedIn</label>
+                {profile.linkedInUrl ? (
+                  <a href={profile.linkedInUrl} target="_blank" rel="noopener noreferrer" className={styles.detailLink}>
+                    {formatUrl(profile.linkedInUrl)}
+                  </a>
+                ) : (
+                  <p className={styles.detailValue}>Not specified</p>
+                )}
               </div>
-              <div><label className={styles.detailLabel}>GitHub</label>
-                {profile.githubUrl ? <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className={styles.detailLink}>: {formatUrl(profile.githubUrl)}</a> : <p className={styles.detailValue}>: Not specified</p>}
+              <div className={styles.detailField}>
+                <label className={styles.detailLabel}>GitHub</label>
+                {profile.githubUrl ? (
+                  <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className={styles.detailLink}>
+                    {formatUrl(profile.githubUrl)}
+                  </a>
+                ) : (
+                  <p className={styles.detailValue}>Not specified</p>
+                )}
               </div>
             </>
           )}
@@ -859,9 +965,7 @@ const JobSeekerDashboard = () => {
         <h3 className={styles.formSectionTitle}>Job Preferences</h3>
         <div className={styles.formGrid}>
           <div>
-            <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)', marginBottom: 'var(--space-2)' }}>
-              Desired Roles
-            </label>
+            <label className={styles.fieldLabel}>Desired Roles</label>
             <div className={styles.skillsList}>
               {profile.preferences.desiredRoles.map((role, i) => (
                 <span key={i} className={styles.skillTag}>
@@ -877,9 +981,7 @@ const JobSeekerDashboard = () => {
             </div>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)', marginBottom: 'var(--space-2)' }}>
-              Work Type
-            </label>
+            <label className={styles.fieldLabel}>Work Type</label>
             <div className={styles.skillsList}>
               {profile.preferences.workTypes.map((type, i) => (
                 <span key={i} className={styles.skillTag}>
@@ -917,8 +1019,14 @@ const JobSeekerDashboard = () => {
             </>
           ) : (
             <>
-              <div><label className={styles.detailLabel}>Minimum Salary</label><p className={styles.detailValue}>{formatSalary(profile.preferences.salaryMin) || 'Not specified'}</p></div>
-              <div><label className={styles.detailLabel}>Maximum Salary</label><p className={styles.detailValue}>{formatSalary(profile.preferences.salaryMax) || 'Not specified'}</p></div>
+              <div className={styles.detailField}>
+                <label className={styles.detailLabel}>Minimum Salary</label>
+                <p className={styles.detailValue}>{formatSalary(profile.preferences.salaryMin) || 'Not specified'}</p>
+              </div>
+              <div className={styles.detailField}>
+                <label className={styles.detailLabel}>Maximum Salary</label>
+                <p className={styles.detailValue}>{formatSalary(profile.preferences.salaryMax) || 'Not specified'}</p>
+              </div>
             </>
           )}
         </div>
@@ -929,20 +1037,11 @@ const JobSeekerDashboard = () => {
         <h3 className={styles.formSectionTitle}>Availability</h3>
         <div className={styles.formGrid}>
           <div>
-            <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)', marginBottom: 'var(--space-2)' }}>
-              Job Search Status
-            </label>
+            <label className={styles.fieldLabel}>Job Search Status</label>
             <select
               value={profile.availability}
               onChange={(e) => setProfile({ ...profile, availability: e.target.value })}
-              style={{
-                width: '100%',
-                padding: 'var(--space-3)',
-                fontSize: 'var(--text-sm)',
-                border: 'var(--border-width) solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                backgroundColor: 'var(--color-surface)',
-              }}
+              className={styles.selectDropdown}
             >
               <option value="Actively looking">Actively looking</option>
               <option value="Open to opportunities">Open to opportunities</option>
@@ -950,20 +1049,11 @@ const JobSeekerDashboard = () => {
             </select>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 'var(--font-medium)', marginBottom: 'var(--space-2)' }}>
-              Profile Visibility
-            </label>
+            <label className={styles.fieldLabel}>Profile Visibility</label>
             <select
               value={profile.profileVisibility}
               onChange={(e) => setProfile({ ...profile, profileVisibility: e.target.value })}
-              style={{
-                width: '100%',
-                padding: 'var(--space-3)',
-                fontSize: 'var(--text-sm)',
-                border: 'var(--border-width) solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                backgroundColor: 'var(--color-surface)',
-              }}
+              className={styles.selectDropdown}
             >
               <option value="Public">Public</option>
               <option value="Recruiters only">Recruiters only</option>
@@ -982,37 +1072,133 @@ const JobSeekerDashboard = () => {
     </>
   );
 
-  const renderApplications = () => (
-    <div className={styles.card}>
-      <h3 className={styles.cardTitle}>All Applications</h3>
-      {applications.length > 0 ? (
-        <div className={styles.list} style={{ marginTop: 'var(--space-4)' }}>
-          {applications.map(app => (
-            <Link key={app.id} to={`/jobs/${app.jobId}`} className={styles.listItem}>
-              <div className={styles.listItemInfo}>
-                <h4 className={styles.listItemTitle}>{app.job.title}</h4>
-                <div className={styles.listItemMeta}>
-                  <span>{app.job.company.name}</span>
-                  <span><MapPin size={12} /> {app.job.location}</span>
-                  <span><Calendar size={12} /> Applied {formatPostedDate(app.appliedAt)}</span>
-                </div>
-              </div>
-              <span className={getStatusBadgeClass(app.status)}>{app.status}</span>
-            </Link>
-          ))}
+  const renderApplications = () => {
+    // Status display configuration
+    const statusConfig = {
+      'Applied': { color: '#3b82f6', bg: '#eff6ff', icon: '📤', label: 'Applied' },
+      'Viewed': { color: '#8b5cf6', bg: '#f5f3ff', icon: '👁️', label: 'Viewed' },
+      'Reviewed': { color: '#6366f1', bg: '#eef2ff', icon: '📋', label: 'Reviewed' },
+      'Shortlisted': { color: '#f59e0b', bg: '#fffbeb', icon: '⭐', label: 'Shortlisted' },
+      'Interview': { color: '#10b981', bg: '#ecfdf5', icon: '🎯', label: 'Interview' },
+      'Offer': { color: '#22c55e', bg: '#f0fdf4', icon: '🎉', label: 'Got Offer' },
+      'Rejected': { color: '#ef4444', bg: '#fef2f2', icon: '❌', label: 'Rejected' }
+    };
+
+    return (
+      <>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+          <Button
+            variant="secondary"
+            size="small"
+            onClick={fetchApplications}
+            disabled={isRefreshing}
+          >
+            {isRefreshing ? 'Refreshing...' : '🔄 Refresh Status'}
+          </Button>
         </div>
-      ) : (
-        <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>📋</div>
-          <h4 className={styles.emptyTitle}>No applications yet</h4>
-          <p className={styles.emptyDescription}>Start applying to jobs to track your progress here.</p>
-          <Link to="/jobs">
-            <Button variant="primary">Browse Jobs</Button>
-          </Link>
+        {/* Status Summary Cards */}
+        <div className={styles.applicationStatusGrid}>
+          <div className={styles.applicationStatusCard}>
+            <p className={`${styles.applicationStatusValue} ${styles.statusApplied}`}>{applications.length}</p>
+            <p className={styles.applicationStatusLabel}>Total Applied</p>
+          </div>
+          <div className={styles.applicationStatusCard}>
+            <p className={`${styles.applicationStatusValue} ${styles.statusShortlisted}`}>{applicationsByStatus.shortlisted}</p>
+            <p className={styles.applicationStatusLabel}>Shortlisted</p>
+          </div>
+          <div className={styles.applicationStatusCard}>
+            <p className={`${styles.applicationStatusValue} ${styles.statusInterview}`}>{applicationsByStatus.interview}</p>
+            <p className={styles.applicationStatusLabel}>Interviews</p>
+          </div>
+          <div className={styles.applicationStatusCard}>
+            <p className={`${styles.applicationStatusValue} ${styles.statusRejected}`}>{applicationsByStatus.rejected}</p>
+            <p className={styles.applicationStatusLabel}>Rejected</p>
+          </div>
         </div>
-      )}
-    </div>
-  );
+
+        {/* Applied Jobs List */}
+        <div className={styles.card}>
+          <h3 className={styles.cardTitle}>Your Applied Jobs</h3>
+          {applications.length > 0 ? (
+            <div className={styles.applicationsList}>
+              {applications.map(app => {
+                const config = statusConfig[app.status] || statusConfig['Applied'];
+                return (
+                  <div key={app._id || app.id} className={styles.applicationItem}>
+                    <div className={styles.applicationItemHeader}>
+                      <div className={styles.applicationItemContent}>
+                        <Link to={`/jobs/${app.job?._id || app.jobId}`} style={{ textDecoration: 'none' }}>
+                          <h4 className={styles.applicationItemTitle}>
+                            {app.job?.title || 'Job Title'}
+                          </h4>
+                        </Link>
+                        <p className={styles.applicationItemMeta}>
+                          {app.job?.company?.name || 'Company'} • {app.job?.location || 'Location'}
+                        </p>
+                        <p className={styles.applicationItemDate}>
+                          <Calendar size={12} />
+                          Applied {formatPostedDate(app.appliedAt)}
+                        </p>
+                      </div>
+                      <div className={styles.applicationStatusBadge} style={{ backgroundColor: config.bg, color: config.color }}>
+                        <span>{config.icon}</span>
+                        <span>{config.label}</span>
+                      </div>
+                    </div>
+
+                    {/* Status Progress Bar */}
+                    <div className={styles.applicationProgress}>
+                      <div className={styles.applicationProgressLabels}>
+                        <span>Applied</span>
+                        <span>Reviewed</span>
+                        <span>Shortlisted</span>
+                        <span>Interview</span>
+                        <span>Offer</span>
+                      </div>
+                      <div className={styles.applicationProgressBar}>
+                        {['Applied', 'Reviewed', 'Shortlisted', 'Interview', 'Offer'].map((stage, idx) => {
+                          const stages = ['Applied', 'Reviewed', 'Shortlisted', 'Interview', 'Offer'];
+                          const currentIdx = stages.indexOf(app.status);
+                          const isRejected = app.status === 'Rejected';
+                          const isActive = !isRejected && idx <= currentIdx;
+                          return (
+                            <div
+                              key={stage}
+                              className={`${styles.applicationProgressSegment} ${isRejected ? styles.rejected : (isActive ? styles.active : '')}`}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>📋</div>
+              <h4 className={styles.emptyTitle}>No applications yet</h4>
+              <p className={styles.emptyDescription}>Start applying to jobs to track your progress here.</p>
+              <Link to="/jobs">
+                <Button variant="primary">Browse Jobs</Button>
+              </Link>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  };
+
+  const handleUnsave = async (jobId) => {
+    if (!window.confirm('Are you sure you want to remove this job from your saved list?')) return;
+    try {
+      await api.post(`/jobs/${jobId}/save`);
+      setSavedJobs(prev => prev.filter(job => (job._id || job.id) !== jobId));
+    } catch (err) {
+      console.error('Failed to unsave job:', err);
+      // alert('Failed to remove job');
+    }
+  };
 
   const renderSaved = () => (
     <div className={styles.card}>
@@ -1020,21 +1206,27 @@ const JobSeekerDashboard = () => {
       {savedJobs.length > 0 ? (
         <div className={styles.list} style={{ marginTop: 'var(--space-4)' }}>
           {savedJobs.map(saved => (
-            <div key={saved.id} className={styles.listItem}>
+            <div key={saved._id || saved.id} className={styles.listItem}>
               <div className={styles.listItemInfo}>
-                <h4 className={styles.listItemTitle}>{saved.job.title}</h4>
+                <h4 className={styles.listItemTitle}>{saved.title}</h4>
                 <div className={styles.listItemMeta}>
-                  <span>{saved.job.company.name}</span>
-                  <span><MapPin size={12} /> {saved.job.location}</span>
-                  <span>{formatSalary(saved.job.salaryMin)} - {formatSalary(saved.job.salaryMax)}</span>
+                  <span>{saved.company?.name || 'Unknown Company'}</span>
+                  <span><MapPin size={12} /> {saved.location}</span>
+                  <span>{formatSalary(saved.salaryMin)} - {formatSalary(saved.salaryMax)}</span>
                 </div>
               </div>
               <div className={styles.listItemActions}>
-                <Link to={`/jobs/${saved.jobId}`}>
+                <Link to={`/jobs/${saved._id || saved.id}`}>
                   <Button variant="primary" size="small">View Job</Button>
                 </Link>
-                <Button variant="ghost" size="small">
-                  <Trash2 size={14} />
+                <Button
+                  variant="ghost"
+                  size="small"
+                  onClick={() => handleUnsave(saved._id || saved.id)}
+                  style={{ color: '#ef4444' }}
+                  title="Remove"
+                >
+                  <Trash2 size={16} />
                 </Button>
               </div>
             </div>
@@ -1043,8 +1235,8 @@ const JobSeekerDashboard = () => {
       ) : (
         <div className={styles.emptyState}>
           <div className={styles.emptyIcon}>❤️</div>
-          <h4 className={styles.emptyTitle}>No saved jobs</h4>
-          <p className={styles.emptyDescription}>Save jobs you're interested in to review later.</p>
+          <h4 className={styles.emptyTitle}>No saved jobs yet</h4>
+          <p className={styles.emptyDescription}>Save jobs to view and apply to them later.</p>
           <Link to="/jobs">
             <Button variant="primary">Browse Jobs</Button>
           </Link>
@@ -1053,18 +1245,19 @@ const JobSeekerDashboard = () => {
     </div>
   );
 
+
   const renderSettings = () => (
     <>
       <div className={styles.card}>
         <h3 className={styles.formSectionTitle}>Notification Preferences</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+        <div className={styles.checkboxContainer}>
           {[
             { id: 'newJobs', label: 'New job alerts matching my preferences' },
             { id: 'applicationUpdates', label: 'Application status updates' },
             { id: 'messages', label: 'Employer messages' },
             { id: 'weeklyDigest', label: 'Weekly job digest' },
           ].map(item => (
-            <label key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', fontSize: 'var(--text-sm)' }}>
+            <label key={item.id} className={styles.checkboxLabel}>
               <input type="checkbox" defaultChecked />
               {item.label}
             </label>
@@ -1088,6 +1281,8 @@ const JobSeekerDashboard = () => {
                 fontSize: 'var(--text-sm)',
                 border: 'var(--border-width) solid var(--color-border)',
                 borderRadius: 'var(--radius-md)',
+                background: 'var(--color-surface, #18181b)',
+                color: 'var(--color-text-primary, #fafafa)',
               }}
             >
               <option>Public</option>
@@ -1108,6 +1303,8 @@ const JobSeekerDashboard = () => {
                 fontSize: 'var(--text-sm)',
                 border: 'var(--border-width) solid var(--color-border)',
                 borderRadius: 'var(--radius-md)',
+                background: 'var(--color-surface, #18181b)',
+                color: 'var(--color-text-primary, #fafafa)',
               }}
             >
               <option>Public</option>
@@ -1121,10 +1318,65 @@ const JobSeekerDashboard = () => {
       <div className={styles.card}>
         <h3 className={styles.formSectionTitle}>Account</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          <Button variant="secondary">Change Password</Button>
-          <Button variant="danger">Delete Account</Button>
+          <Button variant="secondary" onClick={() => setShowPasswordModal(true)}>Change Password</Button>
+          <Button variant="danger" onClick={handleDeleteAccount}>Delete Account</Button>
         </div>
       </div>
+
+      {/* Password Change Modal */}
+      {showPasswordModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowPasswordModal(false)}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2>Change Password</h2>
+              <button className={styles.modalClose} onClick={() => setShowPasswordModal(false)}>
+                <X size={24} />
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <form onSubmit={handleSubmitPasswordChange}>
+                <Input
+                  type="password"
+                  label="Current Password"
+                  value={passwordForm.currentPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                  required
+                />
+                <Input
+                  type="password"
+                  label="New Password"
+                  value={passwordForm.newPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                  required
+                  style={{ marginTop: '16px' }}
+                />
+                <Input
+                  type="password"
+                  label="Confirm New Password"
+                  value={passwordForm.confirmPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                  required
+                  style={{ marginTop: '16px' }}
+                />
+                {passwordStatus.error && (
+                  <div style={{ color: '#dc2626', marginTop: '16px', padding: '12px', background: '#fef2f2', borderRadius: '8px' }}>
+                    {passwordStatus.error}
+                  </div>
+                )}
+                {passwordStatus.success && (
+                  <div style={{ color: '#16a34a', marginTop: '16px', padding: '12px', background: '#f0fdf4', borderRadius: '8px' }}>
+                    {passwordStatus.success}
+                  </div>
+                )}
+                <div style={{ marginTop: '24px', display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                  <Button type="button" variant="secondary" onClick={() => setShowPasswordModal(false)}>Cancel</Button>
+                  <Button type="submit" variant="primary">Update Password</Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 
