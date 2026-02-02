@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/CustomButton';
+import ThemeToggle from '../ui/ThemeToggle';
+import LogoutButton from '../ui/LogoutButton';
 import styles from './Navbar.module.css';
 
 const Navbar = () => {
@@ -66,9 +68,8 @@ const Navbar = () => {
                 </div>
                 <span className={styles.userName}>{user?.name}</span>
               </div>
-              <Button variant="ghost" size="small" onClick={logout}>
-                Log out
-              </Button>
+              <LogoutButton onClick={logout} />
+              <ThemeToggle />
             </>
           ) : (
             <>
@@ -78,6 +79,7 @@ const Navbar = () => {
               <Link to="/signup">
                 <Button variant="primary" size="small">Sign up</Button>
               </Link>
+              <ThemeToggle />
             </>
           )}
         </div>
@@ -111,8 +113,11 @@ const Navbar = () => {
           ))}
         </div>
         <div className={styles.mobileNavActions}>
+          <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+            <ThemeToggle />
+          </div>
           {isAuthenticated ? (
-            <Button variant="ghost" onClick={logout}>Log out</Button>
+            <LogoutButton onClick={logout} />
           ) : (
             <>
               <Link to="/login" onClick={() => setMobileMenuOpen(false)}>

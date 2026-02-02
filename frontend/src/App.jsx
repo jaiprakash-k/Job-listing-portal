@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import './styles/global.css';
 import Index from "./pages/Index";
 import Login from "./pages/Login";
@@ -16,22 +17,24 @@ import NotFound from "./pages/NotFound";
 
 const App = () => (
   <AuthProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/jobs" element={<Jobs />} />
-        <Route path="/jobs/:id" element={<JobDetail />} />
-        <Route path="/companies" element={<Companies />} />
-        <Route path="/companies/:id" element={<CompanyDetail />} />
-        {/* Smart Dashboard Route */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/employer" element={<EmployerDashboard />} />
-        <Route path="/post-job" element={<PostJob />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/jobs/:id" element={<JobDetail />} />
+          <Route path="/companies" element={<Companies />} />
+          <Route path="/companies/:id" element={<CompanyDetail />} />
+          {/* Smart Dashboard Route */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/employer" element={<EmployerDashboard />} />
+          <Route path="/post-job" element={<PostJob />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   </AuthProvider>
 );
 
