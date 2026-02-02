@@ -660,7 +660,10 @@
 .kanbanBoard {
     display: flex;
     gap: 16px;
-    min-height: 500px;
+    min-height: 0;
+    /* Changed from 500px to allow flex shrinking */
+    flex: 1;
+    /* Fill remaining vertical space */
     overflow-x: auto;
     padding-bottom: 16px;
 }
@@ -673,6 +676,8 @@
     display: flex;
     flex-direction: column;
     border: 1px solid var(--color-border);
+    height: 100%;
+    /* Ensure column takes full height of board */
 }
 
 .columnHeader {
@@ -688,6 +693,8 @@
     letter-spacing: 0.05em;
     background-color: var(--color-surface);
     border-radius: 12px 12px 0 0;
+    flex-shrink: 0;
+    /* Header shouldn't shrink */
 }
 
 .columnCount {
@@ -701,7 +708,9 @@
 
 .columnBody {
     flex: 1;
-    /* overflow-y: auto;  <-- REMOVE double scroll */
+    overflow-y: auto;
+    /* Enable independent vertical scrolling */
+    overflow-x: hidden;
     padding: 12px;
     display: flex;
     flex-direction: column;
@@ -946,7 +955,92 @@
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.tagInputContainer:focus-within {
-    border-color: var(--color-accent-primary);
-    box-shadow: 0 0 0 3px rgba(74, 107, 93, 0.1);
+
+/* Profile Modal Specifics */
+.profileHeader {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.profileAvatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-inverse);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.profileInfo h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--color-text-primary);
+}
+
+.profileInfo p {
+    margin: 4px 0 0;
+    color: var(--color-text-secondary);
+}
+
+.profileSection {
+    margin-bottom: 24px;
+    border-top: 1px solid var(--color-border);
+    padding-top: 16px;
+}
+
+.profileLabel {
+    display: block;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+}
+
+.profileText {
+    margin: 0;
+    color: var(--color-text-primary);
+    line-height: 1.5;
+}
+
+.profileGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.profileSubSection {
+    margin-bottom: 16px;
+}
+
+.profileLinkGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.profileLink {
+    color: var(--color-accent-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.profileLink:hover {
+    text-decoration: underline;
+}
+
+.resumeLink {
+    color: #ef4444;
+    /* Keep red for resume */
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }

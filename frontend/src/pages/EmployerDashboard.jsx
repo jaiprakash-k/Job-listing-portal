@@ -1330,113 +1330,64 @@ const EmployerDashboard = () => {
       {/* Candidate Profile Modal */}
       {
         selectedCandidate && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
-          }} onClick={() => setSelectedCandidate(null)}>
-            <div style={{
-              backgroundColor: 'white',
-              borderRadius: '12px',
-              padding: '24px',
-              maxWidth: '500px',
-              width: '90%',
-              maxHeight: '80vh',
-              overflow: 'auto'
-            }} onClick={e => e.stopPropagation()}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Candidate Profile</h2>
-                <button
-                  onClick={() => setSelectedCandidate(null)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '24px',
-                    cursor: 'pointer',
-                    color: '#64748b'
-                  }}
-                >
-                  ×
+          <div className={styles.modalOverlay} onClick={() => setSelectedCandidate(null)}>
+            <div className={styles.modal} onClick={e => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <h2>Candidate Profile</h2>
+                <button className={styles.modalClose} onClick={() => setSelectedCandidate(null)}>
+                  <XCircle size={24} />
                 </button>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-                <div style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--color-accent-primary, #3b5998)',
-                  color: 'white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '24px',
-                  fontWeight: 'bold'
-                }}>
-                  {(selectedCandidate.applicant?.name || selectedCandidate.applicant?.email || 'U').charAt(0).toUpperCase()}
+              <div className={styles.modalBody}>
+                <div className={styles.profileHeader}>
+                  <div className={styles.profileAvatar}>
+                    {(selectedCandidate.applicant?.name || selectedCandidate.applicant?.email || 'U').charAt(0).toUpperCase()}
+                  </div>
+                  <div className={styles.profileInfo}>
+                    <h3>{selectedCandidate.applicant?.name || 'Unknown Name'}</h3>
+                    <p>{selectedCandidate.applicant?.email || 'No email provided'}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: '1.25rem' }}>
-                    {selectedCandidate.applicant?.name || 'Unknown Name'}
-                  </h3>
-                  <p style={{ margin: '4px 0 0', color: '#64748b' }}>
-                    {selectedCandidate.applicant?.email || 'No email provided'}
-                  </p>
-                </div>
-              </div>
 
-              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
                 {/* Profile Title & Summary */}
                 {selectedCandidate.applicant?.profile?.title && (
-                  <div style={{ marginBottom: '16px' }}>
-                    <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Title</label>
-                    <p style={{ margin: '4px 0 0' }}>{selectedCandidate.applicant.profile.title}</p>
+                  <div className={styles.profileSubSection}>
+                    <label className={styles.profileLabel}>Title</label>
+                    <p className={styles.profileText}>{selectedCandidate.applicant.profile.title}</p>
                   </div>
                 )}
 
                 {selectedCandidate.applicant?.profile?.summary && (
-                  <div style={{ marginBottom: '16px' }}>
-                    <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Summary</label>
-                    <p style={{ margin: '4px 0 0', whiteSpace: 'pre-wrap' }}>{selectedCandidate.applicant.profile.summary}</p>
+                  <div className={styles.profileSubSection}>
+                    <label className={styles.profileLabel}>Summary</label>
+                    <p className={styles.profileText} style={{ whiteSpace: 'pre-wrap' }}>{selectedCandidate.applicant.profile.summary}</p>
                   </div>
                 )}
 
                 {/* Contact Info */}
-                <div style={{ marginBottom: '16px', display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+                <div className={styles.profileGrid}>
                   {selectedCandidate.applicant?.profile?.phone && (
                     <div>
-                      <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Phone</label>
-                      <p style={{ margin: '4px 0 0' }}>{selectedCandidate.applicant.profile.phone}</p>
+                      <label className={styles.profileLabel}>Phone</label>
+                      <p className={styles.profileText}>{selectedCandidate.applicant.profile.phone}</p>
                     </div>
                   )}
                   {selectedCandidate.applicant?.profile?.location && (
                     <div>
-                      <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Location</label>
-                      <p style={{ margin: '4px 0 0' }}>{selectedCandidate.applicant.profile.location}</p>
+                      <label className={styles.profileLabel}>Location</label>
+                      <p className={styles.profileText}>{selectedCandidate.applicant.profile.location}</p>
                     </div>
                   )}
                 </div>
 
                 {/* Skills */}
                 {selectedCandidate.applicant?.profile?.skills?.length > 0 && (
-                  <div style={{ marginBottom: '16px' }}>
-                    <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Skills</label>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
+                  <div className={styles.profileSubSection}>
+                    <label className={styles.profileLabel}>Skills</label>
+                    <div className={styles.skillsList}>
                       {selectedCandidate.applicant.profile.skills.map((skill, idx) => (
-                        <span key={idx} style={{
-                          backgroundColor: skill.primary ? '#dbeafe' : '#f1f5f9',
-                          color: skill.primary ? '#1e40af' : '#475569',
-                          padding: '4px 12px',
-                          borderRadius: '16px',
-                          fontSize: '0.875rem'
-                        }}>
+                        <span key={idx} className={`${styles.skillTag} ${skill.primary ? styles.skillTagPrimary : ''}`}>
                           {skill.name}
                           {skill.proficiency && <span style={{ opacity: 0.7 }}> • {skill.proficiency}</span>}
                         </span>
@@ -1447,16 +1398,16 @@ const EmployerDashboard = () => {
 
                 {/* Experience */}
                 {selectedCandidate.applicant?.profile?.experience?.length > 0 && (
-                  <div style={{ marginBottom: '16px' }}>
-                    <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Experience</label>
+                  <div className={styles.profileSection}>
+                    <label className={styles.profileLabel}>Experience</label>
                     {selectedCandidate.applicant.profile.experience.map((exp, idx) => (
-                      <div key={idx} style={{ backgroundColor: '#f8fafc', padding: '12px', borderRadius: '8px', marginTop: '8px' }}>
-                        <p style={{ margin: 0, fontWeight: 600 }}>{exp.title}</p>
-                        <p style={{ margin: '4px 0', color: '#64748b' }}>{exp.company} {exp.location && `• ${exp.location}`}</p>
-                        <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>
+                      <div key={idx} className={styles.entryCard}>
+                        <p className={styles.entryTitle}>{exp.title}</p>
+                        <p className={styles.entrySubtitle}>{exp.company} {exp.location && `• ${exp.location}`}</p>
+                        <p className={styles.entryMeta}>
                           {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
                         </p>
-                        {exp.description && <p style={{ margin: '8px 0 0', fontSize: '0.875rem' }}>{exp.description}</p>}
+                        {exp.description && <p className={styles.entryDescription}>{exp.description}</p>}
                       </div>
                     ))}
                   </div>
@@ -1464,13 +1415,13 @@ const EmployerDashboard = () => {
 
                 {/* Education */}
                 {selectedCandidate.applicant?.profile?.education?.length > 0 && (
-                  <div style={{ marginBottom: '16px' }}>
-                    <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Education</label>
+                  <div className={styles.profileSection}>
+                    <label className={styles.profileLabel}>Education</label>
                     {selectedCandidate.applicant.profile.education.map((edu, idx) => (
-                      <div key={idx} style={{ backgroundColor: '#f8fafc', padding: '12px', borderRadius: '8px', marginTop: '8px' }}>
-                        <p style={{ margin: 0, fontWeight: 600 }}>{edu.degree} {edu.field && `in ${edu.field}`}</p>
-                        <p style={{ margin: '4px 0', color: '#64748b' }}>{edu.institution}</p>
-                        <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>
+                      <div key={idx} className={styles.entryCard}>
+                        <p className={styles.entryTitle}>{edu.degree} {edu.field && `in ${edu.field}`}</p>
+                        <p className={styles.entrySubtitle}>{edu.institution}</p>
+                        <p className={styles.entryMeta}>
                           {edu.startYear} - {edu.endYear}
                           {edu.grade && ` • Grade: ${edu.grade}`}
                         </p>
@@ -1481,23 +1432,23 @@ const EmployerDashboard = () => {
 
                 {/* Projects */}
                 {selectedCandidate.applicant?.profile?.projects?.length > 0 && (
-                  <div style={{ marginBottom: '16px' }}>
-                    <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Projects</label>
+                  <div className={styles.profileSection}>
+                    <label className={styles.profileLabel}>Projects</label>
                     {selectedCandidate.applicant.profile.projects.map((proj, idx) => (
-                      <div key={idx} style={{ backgroundColor: '#f8fafc', padding: '12px', borderRadius: '8px', marginTop: '8px' }}>
-                        <p style={{ margin: 0, fontWeight: 600 }}>{proj.title}</p>
-                        {proj.role && <p style={{ margin: '4px 0', color: '#64748b', fontSize: '0.875rem' }}>{proj.role}</p>}
-                        {proj.description && <p style={{ margin: '4px 0', fontSize: '0.875rem' }}>{proj.description}</p>}
+                      <div key={idx} className={styles.entryCard}>
+                        <p className={styles.entryTitle}>{proj.title}</p>
+                        {proj.role && <p className={styles.entrySubtitle}>{proj.role}</p>}
+                        {proj.description && <p className={styles.entryDescription}>{proj.description}</p>}
                         {proj.techStack?.length > 0 && (
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '8px' }}>
+                          <div className={styles.skillsList} style={{ marginTop: '8px' }}>
                             {proj.techStack.map((tech, i) => (
-                              <span key={i} style={{ backgroundColor: '#e2e8f0', padding: '2px 8px', borderRadius: '4px', fontSize: '0.75rem' }}>{tech}</span>
+                              <span key={i} className={styles.skillTag} style={{ fontSize: '0.75rem' }}>{tech}</span>
                             ))}
                           </div>
                         )}
-                        <div style={{ marginTop: '8px', display: 'flex', gap: '12px' }}>
-                          {proj.githubUrl && <a href={proj.githubUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.875rem', color: '#0077b5' }}>GitHub</a>}
-                          {proj.projectUrl && <a href={proj.projectUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.875rem', color: '#0077b5' }}>Live Demo</a>}
+                        <div style={{ marginTop: '12px', display: 'flex', gap: '12px' }}>
+                          {proj.githubUrl && <a href={proj.githubUrl} target="_blank" rel="noopener noreferrer" className={styles.profileLink}>GitHub</a>}
+                          {proj.projectUrl && <a href={proj.projectUrl} target="_blank" rel="noopener noreferrer" className={styles.profileLink}>Live Demo</a>}
                         </div>
                       </div>
                     ))}
@@ -1505,59 +1456,65 @@ const EmployerDashboard = () => {
                 )}
 
                 {/* Links */}
-                <div style={{ marginBottom: '16px', display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+                <div className={styles.profileLinkGroup}>
                   {selectedCandidate.resumeUrl && (
-                    <a href={selectedCandidate.resumeUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#dc2626', fontWeight: 600 }}>📄 View Resume</a>
+                    <a href={selectedCandidate.resumeUrl} target="_blank" rel="noopener noreferrer" className={styles.resumeLink}>
+                      <FileText size={16} /> View Resume
+                    </a>
                   )}
                   {selectedCandidate.applicant?.profile?.linkedInUrl && (
-                    <a href={selectedCandidate.applicant.profile.linkedInUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#0077b5' }}>LinkedIn</a>
+                    <a href={selectedCandidate.applicant.profile.linkedInUrl} target="_blank" rel="noopener noreferrer" className={styles.profileLink}>LinkedIn</a>
                   )}
                   {selectedCandidate.applicant?.profile?.githubUrl && (
-                    <a href={selectedCandidate.applicant.profile.githubUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#333' }}>GitHub</a>
+                    <a href={selectedCandidate.applicant.profile.githubUrl} target="_blank" rel="noopener noreferrer" className={styles.profileLink}>GitHub</a>
                   )}
                   {selectedCandidate.applicant?.profile?.portfolioUrl && (
-                    <a href={selectedCandidate.applicant.profile.portfolioUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#059669' }}>Portfolio</a>
+                    <a href={selectedCandidate.applicant.profile.portfolioUrl} target="_blank" rel="noopener noreferrer" className={styles.profileLink}>Portfolio</a>
                   )}
                 </div>
 
                 {/* Application Info */}
-                <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginTop: '16px' }}>
-                  <h4 style={{ margin: '0 0 12px', color: '#475569' }}>Application Details</h4>
-                  <div style={{ marginBottom: '12px' }}>
-                    <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Applied For</label>
-                    <p style={{ margin: '4px 0 0' }}>{selectedCandidate.job?.title || 'Unknown Job'}</p>
+                <div className={styles.profileSection}>
+                  <h4 className={styles.formSectionTitle} style={{ marginTop: 0 }}>Application Details</h4>
+
+                  <div className={styles.profileSubSection}>
+                    <label className={styles.profileLabel}>Applied For</label>
+                    <p className={styles.profileText}>{selectedCandidate.job?.title || 'Unknown Job'}</p>
                   </div>
-                  <div style={{ marginBottom: '12px' }}>
-                    <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Applied On</label>
-                    <p style={{ margin: '4px 0 0' }}>{formatPostedDate(selectedCandidate.appliedAt)}</p>
+
+                  <div className={styles.profileSubSection}>
+                    <label className={styles.profileLabel}>Applied On</label>
+                    <p className={styles.profileText}>{formatPostedDate(selectedCandidate.appliedAt)}</p>
                   </div>
-                  <div style={{ marginBottom: '12px' }}>
-                    <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Status</label>
-                    <p style={{ margin: '4px 0 0' }}>
+
+                  <div className={styles.profileSubSection}>
+                    <label className={styles.profileLabel}>Status</label>
+                    <div style={{ marginTop: '4px' }}>
                       <span className={getStatusBadgeClass(selectedCandidate.status)}>{selectedCandidate.status}</span>
-                    </p>
+                    </div>
                   </div>
+
                   {selectedCandidate.coverLetter && (
-                    <div style={{ marginBottom: '12px' }}>
-                      <label style={{ fontWeight: 600, color: '#475569', fontSize: '0.875rem' }}>Cover Letter</label>
-                      <p style={{ margin: '4px 0 0', whiteSpace: 'pre-wrap', backgroundColor: '#f8fafc', padding: '12px', borderRadius: '8px' }}>
-                        {selectedCandidate.coverLetter}
-                      </p>
+                    <div className={styles.profileSubSection}>
+                      <label className={styles.profileLabel}>Cover Letter</label>
+                      <div className={styles.entryCard} style={{ backgroundColor: 'var(--color-background-alt)' }}>
+                        <p className={styles.profileText} style={{ whiteSpace: 'pre-wrap' }}>{selectedCandidate.coverLetter}</p>
+                      </div>
                     </div>
                   )}
                 </div>
-              </div>
 
-              <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
-                <Button variant="primary" fullWidth onClick={() => setSelectedCandidate(null)}>
-                  Close
-                </Button>
+                <div style={{ marginTop: '24px' }}>
+                  <Button variant="primary" fullWidth onClick={() => setSelectedCandidate(null)}>
+                    Close
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
         )
       }
-    </div >
+    </div>
   );
 };
 
