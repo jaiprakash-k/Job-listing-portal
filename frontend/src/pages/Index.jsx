@@ -91,6 +91,30 @@ const Index = () => {
     fetchData();
   }, []);
 
+  /* Parallax Logic */
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({
+        x: (e.clientX - window.innerWidth / 2) / 50,
+        y: (e.clientY - window.innerHeight / 2) / 50,
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  const handleCardMouseMove = (e) => {
+    const { currentTarget, clientX, clientY } = e;
+    const { left, top } = currentTarget.getBoundingClientRect();
+    const x = clientX - left;
+    const y = clientY - top;
+    currentTarget.style.setProperty("--mouse-x", `${x}px`);
+    currentTarget.style.setProperty("--mouse-y", `${y}px`);
+  };
+
   const heroTitle = "Find your next opportunity";
   const words = heroTitle.split(" ");
 
@@ -100,12 +124,16 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className={styles.hero}>
-        {/* Animated background */}
-        <div className={styles.heroBackground}>
+        {/* Animated background with Parallax */}
+        <motion.div
+          className={styles.heroBackground}
+          animate={{ x: mousePosition.x * -1, y: mousePosition.y * -1 }}
+          transition={{ type: "tween", ease: "linear", duration: 0.2 }}
+        >
           <FloatingPaths position={1} />
           <FloatingPaths position={-1} />
           <div className={styles.heroGlow} />
-        </div>
+        </motion.div>
 
         <div className={styles.heroContent}>
           <motion.div
@@ -209,12 +237,21 @@ const Index = () => {
       <section className={styles.trusted}>
         <div className={styles.container}>
           <p className={styles.trustedLabel}>Trusted by innovative teams</p>
-          <div className={styles.trustedLogos}>
-            {featuredCompanies.map(company => (
-              <span key={company._id} className={styles.trustedLogo}>
-                {company.name}
-              </span>
-            ))}
+          <div className={styles.marqueeWrapper}>
+            <div className={styles.marqueeGroup}>
+              {featuredCompanies.concat(featuredCompanies).concat(featuredCompanies).map((company, i) => (
+                <span key={`${company._id}-${i}`} className={styles.trustedLogo}>
+                  {company.name}
+                </span>
+              ))}
+            </div>
+            <div className={styles.marqueeGroup} aria-hidden="true">
+              {featuredCompanies.concat(featuredCompanies).concat(featuredCompanies).map((company, i) => (
+                <span key={`${company._id}-${i}-duplicate`} className={styles.trustedLogo}>
+                  {company.name}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -248,7 +285,8 @@ const Index = () => {
                 >
                   <Link
                     to={`/jobs?category=${category.name.toLowerCase()}`}
-                    className={styles.categoryCard}
+                    className={`${styles.categoryCard} ${styles.spotlightCard}`}
+                    onMouseMove={handleCardMouseMove}
                   >
                     <div className={styles.categoryIconWrapper}>
                       <IconComponent className={styles.categoryIcon} />
@@ -417,7 +455,8 @@ const Index = () => {
               >
                 <Link
                   to={`/companies/${company._id}`}
-                  className={styles.companyCard}
+                  className={`${styles.companyCard} ${styles.spotlightCard}`}
+                  onMouseMove={handleCardMouseMove}
                 >
                   <div className={styles.companyLogo}>
                     {company.name.charAt(0)}

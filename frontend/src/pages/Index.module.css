@@ -248,6 +248,70 @@
 
 .trustedLogo:hover {
   opacity: 1;
+  color: var(--color-accent-primary);
+}
+
+.marqueeWrapper {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  gap: var(--space-12);
+  mask-image: linear-gradient(to right,
+      transparent,
+      black 10%,
+      black 90%,
+      transparent);
+  -webkit-mask-image: linear-gradient(to right,
+      transparent,
+      black 10%,
+      black 90%,
+      transparent);
+}
+
+.marqueeGroup {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: var(--space-12);
+  min-width: 100%;
+  animation: scroll-x 40s linear infinite;
+}
+
+@keyframes scroll-x {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-100% - var(--space-12)));
+  }
+}
+
+/* Spotlight Effect */
+.spotlightCard {
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlightCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(255, 255, 255, 0.06),
+      transparent 40%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.spotlightCard:hover::before {
+  opacity: 1;
 }
 
 /* ===== Section Headers ===== */
