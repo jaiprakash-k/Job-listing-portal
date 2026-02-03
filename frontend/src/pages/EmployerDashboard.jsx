@@ -533,6 +533,18 @@ const EmployerDashboard = () => {
               value={company.location || ''}
               onChange={(e) => setCompany({ ...company, location: e.target.value })}
             />
+            <Input
+              label="Company Stage"
+              value={company.stage || ''}
+              onChange={(e) => setCompany({ ...company, stage: e.target.value })}
+              placeholder="e.g. Seed, Series A, Public"
+            />
+            <Input
+              label="Total Team Size"
+              value={company.teamSize || ''}
+              onChange={(e) => setCompany({ ...company, teamSize: e.target.value })}
+              placeholder="e.g. 10-50, 100+"
+            />
           </div>
         </div>
 

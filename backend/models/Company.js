@@ -27,6 +27,7 @@ const companySchema = new mongoose.Schema({
         default: 'Flexible'
     },
     mission: String,
+    stage: String,
     engineeringSize: String,
     productSize: String,
     remotePercentage: Number,
