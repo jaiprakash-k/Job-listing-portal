@@ -224,8 +224,8 @@ The frontend will run on `http://localhost:5173`
 #### 4. Access the Application
 
 Open your browser and navigate to:
-- **Frontend**: [http://localhost:5173](http://localhost:5173)
-- **Backend API**: [http://localhost:5000](http://localhost:5000)
+- **Frontend**: [http://localhost:5173](http://localhost:8081)
+- **Backend API**: [http://localhost:5000](http://localhost:8080)
 
 ---
 
