@@ -166,7 +166,15 @@ const JobDetail = () => {
           <div className={styles.jobHeader}>
             <div className={styles.jobHeaderTop}>
               <div className={styles.companyLogo}>
-                {job.company?.name?.charAt(0) || '?'}
+                {job.company?.logo ? (
+                  <img
+                    src={job.company.logo}
+                    alt={`${job.company.name} logo`}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  />
+                ) : (
+                  job.company?.name?.charAt(0) || '?'
+                )}
               </div>
               <div className={styles.jobHeaderInfo}>
                 <h1>{job.title}</h1>
@@ -286,7 +294,15 @@ const JobDetail = () => {
             <div className={styles.companyCard}>
               <div className={styles.companyCardHeader}>
                 <div className={styles.companyCardLogo}>
-                  {job.company.name.charAt(0)}
+                  {job.company.logo ? (
+                    <img
+                      src={job.company.logo}
+                      alt={`${job.company.name} logo`}
+                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    />
+                  ) : (
+                    job.company.name.charAt(0)
+                  )}
                 </div>
                 <div className={styles.companyCardInfo}>
                   <h4>{job.company.name}</h4>
