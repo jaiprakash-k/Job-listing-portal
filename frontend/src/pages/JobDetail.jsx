@@ -321,7 +321,7 @@ const JobDetail = () => {
               </Button>
             </div>
             <p className={styles.applicantCount}>
-              {job.applicationCount} applicants
+              {job.applicationCount} Applied
             </p>
           </div>
 

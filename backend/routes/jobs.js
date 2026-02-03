@@ -83,16 +83,21 @@ router.post('/:id/save', auth, async (req, res) => {
     }
 });
 
+const Application = require('../models/Application');
+
 // GET job by ID
 router.get('/:id', async (req, res) => {
     try {
         const job = await Job.findById(req.params.id).populate('companyId');
         if (!job) return res.status(404).json({ message: 'Job not found' });
 
+        const applicationCount = await Application.countDocuments({ jobId: req.params.id });
+
         res.json({
             ...job.toObject(),
             company: job.companyId,
-            companyId: undefined
+            companyId: undefined,
+            applicationCount
         });
     } catch (err) {
         res.status(500).json({ message: err.message });
