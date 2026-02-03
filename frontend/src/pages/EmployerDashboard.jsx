@@ -316,12 +316,13 @@ const EmployerDashboard = () => {
                 <tr key={job.id}>
                   <td style={{ fontWeight: 500 }}>{job.title}</td>
                   <td>{job.location}</td>
-                  <td>{job.applicationCount}</td>
+                  <td>{applications.filter(app => (app.jobId || app.job?._id || app.job?.id) === (job._id || job.id)).length}</td>
                   <td>{formatPostedDate(job.postedAt)}</td>
                   <td><span className={getStatusBadgeClass(job.status || 'Active')}>{job.status || 'Active'}</span></td>
                   <td>
                     <Button variant="ghost" size="small" onClick={() => {
                       setSelectedJob(job);
+
                       setActiveSection('applicants');
                     }}>
                       View

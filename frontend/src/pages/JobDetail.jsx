@@ -8,6 +8,7 @@ import Input, { Textarea } from '../components/ui/CustomInput';
 import { formatSalary, formatPostedDate } from '../data/mockData';
 import styles from './JobDetail.module.css';
 import { api } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 
 const JobDetail = () => {
   const { id } = useParams();
@@ -25,7 +26,10 @@ const JobDetail = () => {
   const [coverLetter, setCoverLetter] = useState('');
   const [linkedIn, setLinkedIn] = useState('');
   const [resumeFile, setResumeFile] = useState(null);
+  const [existingResumeUrl, setExistingResumeUrl] = useState(null);
+  const [useExistingResume, setUseExistingResume] = useState(false);
   const fileInputRef = useRef(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -80,6 +84,33 @@ const JobDetail = () => {
     }
   }, [id]);
 
+
+
+
+  // Fetch user profile for autofill when modal opens
+  useEffect(() => {
+    if (showApplyModal && user) {
+      const fetchUserProfile = async () => {
+        try {
+          // Use the profile endpoint to get the latest resume and linkedin
+          const profile = await api.get('/users/profile');
+          if (profile) {
+            if (profile.linkedInUrl && !linkedIn) {
+              setLinkedIn(profile.linkedInUrl);
+            }
+            if (profile.resumeUrl) {
+              setExistingResumeUrl(profile.resumeUrl);
+              setUseExistingResume(true);
+            }
+          }
+        } catch (err) {
+          console.error('Failed to fetch user profile for autofill:', err);
+        }
+      };
+      fetchUserProfile();
+    }
+  }, [showApplyModal, user]);
+
   if (loading) {
     return (
       <div className={styles.jobDetailPage}>
@@ -108,23 +139,27 @@ const JobDetail = () => {
     );
   }
 
+
+
   const handleApply = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setApplicationError(null);
 
     try {
-      let uploadedResumeUrl = null;
+      let finalResumeUrl = null;
 
-      // Upload resume file if selected
-      if (resumeFile) {
+      // Handle Resume: Use existing or upload new
+      if (useExistingResume && existingResumeUrl) {
+        finalResumeUrl = existingResumeUrl;
+      } else if (resumeFile) {
         const formData = new FormData();
         formData.append('resume', resumeFile);
 
         try {
           const uploadResult = await api.post('/upload/resume', formData);
-          uploadedResumeUrl = uploadResult.resumeUrl;
-          console.log('Resume uploaded:', uploadedResumeUrl);
+          finalResumeUrl = uploadResult.resumeUrl;
+          console.log('Resume uploaded:', finalResumeUrl);
         } catch (uploadErr) {
           console.error('Resume upload failed:', uploadErr);
           setApplicationError('Failed to upload resume. Please try again.');
@@ -138,7 +173,7 @@ const JobDetail = () => {
         jobId: id,
         coverLetter: coverLetter.trim() || undefined,
         linkedIn: linkedIn.trim() || undefined,
-        resumeUrl: uploadedResumeUrl
+        resumeUrl: finalResumeUrl
       });
       setApplicationSubmitted(true);
     } catch (err) {
@@ -365,48 +400,117 @@ const JobDetail = () => {
                 <form className={styles.applyForm} onSubmit={handleApply}>
                   <div className={styles.fileUpload}>
                     <label>Resume (optional)</label>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      accept=".pdf,.doc,.docx"
-                      style={{ display: 'none' }}
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          setResumeFile(e.target.files[0]);
-                        }
-                      }}
-                    />
-                    <div
-                      className={styles.fileDropzone}
-                      onClick={() => fileInputRef.current?.click()}
-                      style={{ cursor: 'pointer' }}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                          setResumeFile(e.dataTransfer.files[0]);
-                        }
-                      }}
-                    >
-                      {resumeFile ? (
-                        <>
-                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="1.5">
-                            <path d="M9 12l2 2 4-4" />
-                            <circle cx="12" cy="12" r="10" />
+
+                    {useExistingResume && existingResumeUrl ? (
+                      <div className={styles.existingResumeCard} style={{
+                        padding: '12px',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginTop: '8px',
+                        backgroundColor: 'var(--color-surface)'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '6px',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#3b82f6'
+                          }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                              <polyline points="14 2 14 8 20 8"></polyline>
+                              <line x1="12" y1="18" x2="12" y2="12"></line>
+                              <line x1="9" y1="15" x2="15" y2="15"></line>
+                            </svg>
+                          </div>
+                          <div>
+                            <p style={{ margin: 0, fontSize: '14px', fontWeight: 500 }}>Resume from Profile</p>
+                            <a href={existingResumeUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#64748b' }}>View Resume</a>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setUseExistingResume(false)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            color: '#64748b',
+                            padding: '4px'
+                          }}
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
                           </svg>
-                          <p style={{ fontWeight: 500, color: '#22c55e' }}>{resumeFile.name}</p>
-                          <span style={{ cursor: 'pointer', color: '#64748b' }} onClick={(e) => { e.stopPropagation(); setResumeFile(null); }}>Click to remove</span>
-                        </>
-                      ) : (
-                        <>
-                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-                          </svg>
-                          <p>Drop your resume here or click to upload</p>
-                          <span>PDF, DOC up to 5MB</span>
-                        </>
-                      )}
-                    </div>
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          accept=".pdf,.doc,.docx"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              setResumeFile(e.target.files[0]);
+                              setUseExistingResume(false);
+                            }
+                          }}
+                        />
+                        <div
+                          className={styles.fileDropzone}
+                          onClick={() => fileInputRef.current?.click()}
+                          style={{ cursor: 'pointer' }}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                              setResumeFile(e.dataTransfer.files[0]);
+                              setUseExistingResume(false);
+                            }
+                          }}
+                        >
+                          {resumeFile ? (
+                            <>
+                              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="1.5">
+                                <path d="M9 12l2 2 4-4" />
+                                <circle cx="12" cy="12" r="10" />
+                              </svg>
+                              <p style={{ fontWeight: 500, color: '#22c55e' }}>{resumeFile.name}</p>
+                              <span style={{ cursor: 'pointer', color: '#64748b' }} onClick={(e) => { e.stopPropagation(); setResumeFile(null); }}>Click to remove</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                              </svg>
+                              <p>Drop your resume here or click to upload</p>
+                              <span>PDF, DOC up to 5MB</span>
+                              {existingResumeUrl && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="small"
+                                  onClick={(e) => { e.stopPropagation(); setUseExistingResume(true); }}
+                                  style={{ marginTop: '8px', color: '#3b82f6' }}
+                                >
+                                  Use Profile Resume
+                                </Button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </div>
                   <Textarea
                     label="Cover Letter (optional)"
