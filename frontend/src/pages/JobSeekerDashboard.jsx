@@ -18,6 +18,7 @@ import {
   getProfileCompleteness,
 } from '../data/mockData';
 import styles from './Dashboard.module.css';
+import ResumeBuilder from '../components/resume/ResumeBuilder';
 
 const formatUrl = (url) => {
   if (!url) return '';
@@ -160,7 +161,8 @@ const JobSeekerDashboard = () => {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: <Briefcase size={18} /> },
     { id: 'profile', label: 'My Profile', icon: <User size={18} /> },
-    { id: 'applications', label: 'Applied Jobs', icon: <FileText size={18} /> },
+    { id: 'resume', label: 'Resume Builder', icon: <FileText size={18} /> },
+    { id: 'applications', label: 'Applied Jobs', icon: <Briefcase size={18} /> }, // Changed Icon to Briefcase for semantic correctness if needed, or keep FileText
     { id: 'saved', label: 'Saved Jobs', icon: <Heart size={18} /> },
     { id: 'settings', label: 'Settings', icon: <Settings size={18} /> },
   ];
@@ -1387,6 +1389,7 @@ const JobSeekerDashboard = () => {
       case 'applications': return renderApplications();
       case 'saved': return renderSaved();
       case 'settings': return renderSettings();
+      case 'resume': return <ResumeBuilder profile={profile} onEditProfile={() => { setActiveSection('profile'); setIsEditing(true); }} />;
       default: return renderOverview();
     }
   };
@@ -1397,6 +1400,7 @@ const JobSeekerDashboard = () => {
       case 'profile': return { title: 'My Profile', description: 'Manage your professional profile' };
       case 'applications': return { title: 'Applications', description: 'Track your job applications' };
       case 'saved': return { title: 'Saved Jobs', description: 'Jobs you\'ve bookmarked for later' };
+      case 'resume': return { title: 'Resume Builder', description: 'Create and download professional resumes' };
       case 'settings': return { title: 'Settings', description: 'Manage your account preferences' };
       default: return { title: 'Dashboard', description: '' };
     }

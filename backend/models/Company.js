@@ -10,6 +10,10 @@ const companySchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    logo: {
+        type: String, // URL to the logo image
+        default: ''
+    },
     tagline: String,
     description: String,
     industry: String,

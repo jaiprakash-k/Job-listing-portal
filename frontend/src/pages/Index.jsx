@@ -459,7 +459,15 @@ const Index = () => {
                   onMouseMove={handleCardMouseMove}
                 >
                   <div className={styles.companyLogo}>
-                    {company.name.charAt(0)}
+                    {company.logo ? (
+                      <img
+                        src={company.logo}
+                        alt={`${company.name} logo`}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                      />
+                    ) : (
+                      company.name.charAt(0)
+                    )}
                   </div>
                   <div className={styles.companyInfo}>
                     <h3 className={styles.companyName}>{company.name}</h3>

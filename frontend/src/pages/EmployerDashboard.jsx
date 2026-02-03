@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   Building2, Briefcase, Users, Settings, Plus, Edit2, Trash2,
   ChevronRight, Eye, MapPin, Calendar, FileText, Download,
-  CheckCircle, XCircle, Clock, ChevronDown
+  CheckCircle, XCircle, Clock, ChevronDown, Upload, Camera
 } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Button from '../components/ui/CustomButton';
@@ -40,6 +40,7 @@ const EmployerDashboard = () => {
   const [passwordStatus, setPasswordStatus] = useState({ error: null, success: null });
   const [company, setCompany] = useState({
     name: '',
+    logo: '',
     website: '',
     industry: '',
     founded: new Date().getFullYear(),
@@ -383,6 +384,38 @@ const EmployerDashboard = () => {
     setCompany({ ...company, benefits: newBenefits });
   };
 
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate type
+    if (!file.type.match(/^image\/(jpeg|jpg|png|webp)$/)) {
+      alert('Only .jpg, .png, and .webp images are allowed');
+      return;
+    }
+
+    // Validate size (2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('File size too large. Max limit is 2MB');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('logo', file);
+
+    try {
+      setLoading(true);
+      const res = await api.post('/companies/upload-logo', formData);
+      setCompany(prev => ({ ...prev, logo: res.logoUrl }));
+      alert('Logo uploaded successfully');
+    } catch (err) {
+      console.error('Logo upload failed:', err);
+      alert('Failed to upload logo');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSaveCompany = async () => {
     try {
       if (!company._id && !company.id) {
@@ -441,6 +474,39 @@ const EmployerDashboard = () => {
           <Button variant="primary" onClick={() => { handleSaveCompany(); setIsEditingCompany(false); }}>
             Save Changes
           </Button>
+        </div>
+
+        {/* Logo Upload Section */}
+        <div className={styles.formCard}>
+          <h3 className={styles.formSectionTitle}>Company Logo</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <div style={{
+              width: '100px',
+              height: '100px',
+              borderRadius: '12px',
+              border: '1px dashed var(--color-border)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+              backgroundColor: 'var(--color-surface)',
+            }}>
+              {company.logo ? (
+                <img src={company.logo} alt="Company Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              ) : (
+                <Building2 size={40} color="var(--color-text-muted)" />
+              )}
+            </div>
+            <div>
+              <label className={styles.actionButton} style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <input type="file" accept="image/*" onChange={handleLogoUpload} style={{ display: 'none' }} />
+                <Upload size={18} /> Upload New Logo
+              </label>
+              <p style={{ marginTop: '8px', fontSize: '13px', color: 'var(--color-text-muted)' }}>
+                Recommended: 400x400px, Max 2MB (PNG, JPG)
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Basic Info */}

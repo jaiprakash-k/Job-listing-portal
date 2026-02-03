@@ -359,7 +359,17 @@ const Jobs = () => {
                   {filteredJobs.map(job => (
                     <Link to={`/jobs/${job._id || job.id}`} key={job._id || job.id} className={styles.jobCard}>
                       <div className={styles.companyLogo}>
-                        {job.company?.name?.charAt(0) || '?'}
+                        {job.company?.logo ? (
+                          <img
+                            src={job.company.logo}
+                            alt={`${job.company.name} logo`}
+                            style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }}
+                          />
+                        ) : (
+                          <span style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--color-primary)' }}>
+                            {job.company?.name?.charAt(0) || '?'}
+                          </span>
+                        )}
                       </div>
                       <div className={styles.jobInfo}>
                         <div className={styles.jobHeader}>

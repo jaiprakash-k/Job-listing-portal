@@ -65,7 +65,17 @@ const Companies = () => {
                         >
                             <div style={{ marginBottom: '16px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                                    <Building2 size={24} className={styles.iconPrimary} />
+                                    {company.logo ? (
+                                        <div style={{ width: '40px', height: '40px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--color-border)' }}>
+                                            <img
+                                                src={company.logo}
+                                                alt={`${company.name} logo`}
+                                                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '2px' }}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <Building2 size={24} className={styles.iconPrimary} />
+                                    )}
                                     <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600 }}>
                                         {company.name}
                                     </h3>

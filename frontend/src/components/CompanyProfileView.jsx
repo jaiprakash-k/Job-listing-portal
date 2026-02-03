@@ -13,7 +13,11 @@ const CompanyProfileView = ({ company, jobs = [], onEdit }) => {
             <div className={styles.card} style={{ marginBottom: '24px' }}>
                 <div className={styles.companyHeader}>
                     <div className={styles.companyLogo}>
-                        <Building2 size={40} />
+                        {company.logo ? (
+                            <img src={company.logo} alt={`${company.name} Logo`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                        ) : (
+                            <Building2 size={40} />
+                        )}
                     </div>
                     <div className={styles.companyInfo}>
                         <h1 className={styles.companyName}>
